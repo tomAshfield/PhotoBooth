@@ -4,7 +4,7 @@ body, html {
     height: 100%;
     overflow: hidden; /* Prevent scrolling */
     overflow-y: hidden;
-    font-family: "Jersey 15", sans-serif;
+    font-family: "DM Sans", sans-serif;
     font-weight: 400;
     font-style: normal;
 }

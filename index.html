@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Jersey+10&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <div class="container">
@@ -180,10 +181,13 @@
             // Call signInWithGoogle function when the button is clicked
             signInWithGoogle()
                 .then((user) => {
-                    // User is successfully logged in
+                    // User is successfully logged in, add to localStorage
 
                     // Save the user object to grad their name
                     userObject = user;
+                    console.log(userObject);
+
+                    localStorage.setItem("user", JSON.stringify(userObject));
 
                     requestCameraAccess();
                     // Call function to add the user to the online list in the database
@@ -1291,6 +1295,34 @@
         //HOMEPAGE
 
         document.addEventListener("DOMContentLoaded", function() {
+
+            if(localStorage.getItem("user")){
+                const user = localStorage.getItem("user");
+                userObject = JSON.parse(user);
+                console.log(userObject);
+
+                requestCameraAccess();
+
+                // Call function to add the user to the online list in the database
+                addNewUserToDatabase(userObject);
+
+                // Call function to start listening for changes in the online list
+                listenForOnlineUsersChanges();
+
+                // Request and display post data
+                fetchAndReverseData();
+
+                // Hide the main container and display signed-in sections
+                const container = document.querySelector(".container");
+                const photoBooth = document.querySelector(".photoBooth");
+                const rightSide = document.querySelector(".rightSide");
+                const addPhotoBtn = document.querySelector(".addPhoto");
+
+                container.style.display = "none";
+                photoBooth.style.display = "flex";
+                rightSide.style.display = "flex";
+                addPhotoBtn.style.display = "block";
+            }
             const images = ["assets/homepage_img8.jpeg", "assets/homepage_img9.jpeg", "assets/homepage_img5.webp", "assets/homepage_img7.jpeg"]; // Replace with your image filenames
             const container = document.querySelector(".container");
             let index = 0; // Variable to keep track of the current image index
