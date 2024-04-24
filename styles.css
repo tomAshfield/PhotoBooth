@@ -1,0 +1,840 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling */
+    overflow-y: hidden;
+    font-family: "Jersey 15", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.container {
+    height: 100%;
+    background-size: 100% 100%; /* or specify dimensions like 100% auto; */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Prevent image from repeating */
+    transition: background-image 3s ease-in-out; /* Smooth transition effect */
+}
+
+
+.logo {
+    display: block;
+    margin: auto;
+    padding-top: 50px;
+}
+
+@keyframes fadeInAndMove {
+    from {
+        opacity: 0; /* Start with full transparency */
+        transform: translateY(0); /* Move the logo up by 50 pixels */
+    }
+    to {
+        opacity: 1; /* Fade to full opacity */
+        transform: translateY(50px); /* Return the logo to its original position */
+    }
+}
+
+.sign-in-btn {
+    display: block;
+    margin: auto;
+    background-color: #4285F4;
+    width: 280px;
+    height: 60px;
+    font-size: 25px;
+    border: none;
+    border-radius: 32px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.sign-in-btn:hover{
+    background-color: #1c6ef1;
+}
+
+.guest-sign-in {
+    display: block;
+    margin: auto;
+    background-color: rgb(255, 188, 65);
+    width: 350px;
+    height: 60px;
+    font-size: 28px;
+    border: none;
+    border-radius: 32px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.guest-sign-in:hover{
+    background-color: rgb(255, 177, 32);
+}
+
+@keyframes fadeInButton {
+    from {
+        opacity: 0; /* Start with full transparency */
+    }
+    to {
+        opacity: 1; /* Fade to full opacity */
+    }
+}
+
+.photoBooth {
+    display: flex;
+    width: 100%; /* Ensures the full width of the parent container */
+    height: 100%; /* Full height */
+    margin: 0;
+    padding: 0;
+    background-image: linear-gradient(to bottom, #00b4d8, #001f3f);
+    overflow-y: auto;
+    justify-content: space-between; /* Space between the three sections */
+}
+
+/* Keyframes for revealing the gradient */
+@keyframes revealGradient {
+    from {
+        background-position: top; /* Start the gradient at the top */
+    }
+    to {
+        background-position: bottom; /* Move the gradient to the bottom */
+    }
+}
+
+/* Class that triggers the reveal animation */
+.reveal-gradient {
+    animation: revealGradient 4s ease-out forwards;
+    /* Adjust the duration (1s) and easing (ease-out) as desired */
+}
+
+.photoBoothList {
+    display: flex;
+    flex-direction: column; /* Column orientation */
+    width: 30%;
+    height: 100%; /* Full height */
+}
+
+.logoContainer{
+    width: 100%;
+    height: auto;
+}
+
+.photoLogo {
+    display: block;
+    margin: auto;
+    width: 300px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    position: relative; /* Make the element positioned for pseudo-element */
+}
+
+.dash{
+    display: block;
+    margin: auto;
+    border-top: 4px solid rgb(255, 255, 255);
+    width: 90%;
+    height: 0px;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.topics {
+    display: block;
+    margin: auto;
+    margin-top: 0;
+    width: 80%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 3;
+    
+}
+
+.topics button {
+    display: flex;
+    color: white;
+    width: auto;
+    height: auto;
+    border: none;
+    padding: 30px 20px;
+    padding-left: 33%;
+    background-color: inherit;
+    cursor: pointer;
+    font-size: 25px;
+    transition: border 0.2s, font-size 0.2s;
+    z-index: 3;
+}
+
+.topics button:hover {
+    font-weight: bold;
+    font-size: 28px; /* Increase font size on hover */
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* Home button hover */
+.home-hover:hover {
+    background-color: #0088a9; /* Change to your desired hover color */
+}
+
+/* Music button hover */
+.music-hover:hover {
+    background-color: #e67e22; /* Change to your desired hover color */
+}
+
+/* PetPals button hover */
+.petpals-hover:hover {
+    background-color: #3f51b5; /* Change to your desired hover color */
+}
+
+/* Friends button hover */
+.friends-hover:hover {
+    background-color: #d32f2f; /* Change to your desired hover color */
+}
+
+/* Outdoors button hover */
+.outdoors-hover:hover {
+    background-color: #00c853; /* Change to your desired hover color */
+}
+
+/* Vacation button hover */
+.vacation-hover:hover {
+    background-color: #ff5252; /* Change to your desired hover color */
+}
+
+/* Projects button hover */
+.projects-hover:hover {
+    background-color: #616161; /* Change to your desired hover color */
+}
+
+/* SparcLabs button hover */
+.sparclabs-hover:hover {
+    background-color: #0052a1; /* Change to your desired hover color */
+}
+
+/* DevLog button hover */
+.devlog-hover:hover {
+    background-color: #1769aa; /* Change to your desired hover color */
+}
+
+
+.photoBox {
+    display: flex;
+    flex-direction: column; /* Column orientation */
+    width: 60%;
+    height: 100%; /* Full height */
+    background-color: white;
+    margin: auto;
+    box-shadow: 5px 0px 15px rgba(0, 0, 0, 0.5), /* Right shadow */
+                -5px 0px 15px rgba(0, 0, 0, 0.5); /* Left shadow */
+}
+
+.postBox {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 88.8%;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.photoBoothSection{
+    font-size: 48px;
+    text-align: center;
+    margin: 0;
+    padding-top: 40px;
+    padding-bottom: 28px;
+}
+
+.posts{
+    width: 100%;
+    height: 100%;
+    padding-bottom: 50px;
+}
+
+.post{
+    display: block;
+    margin: auto;
+    width: 70%;
+    height: 550px;
+    border: solid 2px black;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    background-size: 100% 100%;
+    overflow-x: hidden;
+}
+
+.reactions {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    padding: 10px;
+    background-color: inherit;
+}
+
+.reaction {
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    padding-left: 5px;
+    cursor: pointer;
+    background-color: inherit;
+    gap: 7px;
+}
+
+/* Styles for each reaction icon */
+.reactionIcon {
+    cursor: pointer; /* Change cursor style to pointer on hover */
+    transition: width 0.2s ease-in-out; /* Smooth transition for width change */
+    margin-left: 3px;
+    background-color: inherit;
+    width: 24px;
+}
+
+/* Hover effect for reaction icons */
+.reactionIcon:hover {
+    width: 30px;
+}
+
+.currentDate {
+    margin-left: auto; /* Pushes the current date to the far right */
+    padding-top: 2px;
+    font-size: 20px;
+    color: #666;
+}
+
+.postImg{
+    display: block;
+    margin: auto;
+    width: 100%;
+    height: 75%;
+    border: solid 1px black;
+}
+
+.postDesc{
+    text-align: left;
+    padding-left: 20px;
+    padding-top: 10px;
+    overflow-x: hidden;
+    width: 92%;
+    height: 13%;
+    margin: 0;
+    font-size: 20px;
+}
+
+.rightSide {
+    display: flex;
+    flex-direction: column; /* Column orientation */
+    height: 100%; /* Full height */
+    width: 30%;
+    align-items: center;
+}
+
+.currentlyOnline {
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 29px;
+}
+
+.onlineTitle{
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.onlineList{
+    display: block;
+    margin: auto;
+    margin-top: 0;
+    width: 80%;
+    height: 50%;
+    overflow-y: auto;
+    margin-bottom: 6%;
+}
+
+/* Style for the user span */
+.user {
+    display: flex;
+    margin: auto;
+    align-items: center;
+    padding: 20px;
+    color: white;
+    gap: 10px;
+    border-bottom: solid 3px white;
+    border-radius: 16px;
+}
+
+/* Style for the circular profile image */
+.profileImage {
+    border-radius: 50%; /* Make the image circular */
+    width: 60px; /* Adjust the width as needed */
+    height: 60px; /* Adjust the height as needed */
+    margin-right: 10px; /* Add some space between the image and the user name */
+}
+
+/* Style for the user name */
+.userName {
+    font-size: 32px; /* Adjust the font size as needed */
+}
+
+.modalBtn-container {
+    display: block;
+    margin: auto;
+    width: 100%;
+    height: 32%;
+    position: relative; /* Add position relative */
+}
+
+.choice-container {
+    display: flex; /* Hide by default */
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+    top: 40%;
+    padding: 10px;
+    margin: auto;
+    background-color: white;
+    width: fit-content;
+    border-radius: 50%;
+    gap: 15%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+}
+
+.addPhoto {
+    width: 70px; /* Set width and height to make it circular */
+    height: 70px;
+    border-radius: 64px; /* Make it circular */
+    background-color: #00b4d8; /* Button background color */
+    color: #fff; /* Button text color */
+    font-size: 58px; /* Button text size */
+    font-weight: bold; /* Make text bold */
+    border: none; /* Remove border */
+    cursor: pointer; /* Show pointer cursor on hover */
+    outline: none; /* Remove default focus outline */
+    transition: transform .8s; /* Add smooth transition */
+}
+
+.takePhotoChoice, .uploadPhotoChoice {
+    display: none;
+    text-align: center;
+    width: 70px;
+    height: 70px;
+    border-radius: 0; /* Make it circular */
+    background-color: #00b4d8; /* Button background color */
+    color: #fff; /* Button text color */
+    font-size: 56px; /* Button text size */
+    font-weight: bold; /* Make text bold */
+    border: none; /* Remove border */
+    border-radius: 64px;
+    cursor: pointer; /* Show pointer cursor on hover */
+    outline: none; /* Remove default focus outline */
+}
+
+.choice-container.active {
+    width: 80%;
+    border-radius: 16px;
+}
+
+.choice-container:not(.active){
+    width: fit-content;
+    border-radius: 50%;
+}
+
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 100,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+.addPhoto.active {
+    transform: rotate(90deg); /* Rotate the button when 'active' class is applied */
+}
+
+.addPhoto:hover, .takePhotoChoice:hover, .uploadPhotoChoice:hover {
+    background-color: #0f62fe; /* Lighten background color on hover */
+}
+
+
+/* Styles for the upload image modal */
+.uploadImageModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0); /* Fully transparent initially */
+    opacity: 0; /* Start with opacity set to 0 */
+    transition: opacity 1s; /* Smooth transition for opacity */
+}
+
+.uploadImageModal.active {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background when active */
+    opacity: 1; /* Fully opaque when active */
+}
+
+/* Animation for modal content */
+.modal-content {
+    background-color: #fefefe;
+    border-radius: 8px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(-50px); /* Initially move the modal content up by 50 pixels */
+    border: 1px solid #888;
+    width: 28%;
+    padding: 20px;
+    height: 75%;
+    overflow-y: auto; /* Allow vertical scrolling if modal content exceeds viewport height */
+    opacity: 0; /* Initially hide the modal content */
+    animation: fadeInAndMoveUpload 1s forwards; /* Apply animation */
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.55), /* Add box shadow */
+                0 10px 15px rgba(0, 0, 0, 0.50); /* Add a secondary shadow for depth */
+}
+
+@keyframes fadeInAndMoveUpload {
+    from {
+        opacity: .8; /* Start with full transparency */
+        transform: translate(-50%, -50%) translateY(-30px); /* Initially move the modal content up by 50 pixels */
+    }
+    to {
+        opacity: 1; /* Fade to full opacity */
+        transform: translate(-50%, -50%); /* Return the modal content to its original position */
+    }
+}
+
+.uploadModalTitle{
+    text-align: center;
+    margin: 5px;
+    width: 95%;
+    height: 50%;
+    height: auto;
+    color: white;
+    font-size: 42px;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: #0466c8;
+}
+
+.image-container {
+    display: block;
+    margin: auto;
+    position: relative; /* Ensure the container is a positioning context for absolute positioning */
+    width: 90%; /* Adjust container width as needed */
+    height: 50%; /* Adjust container height as needed */
+}
+
+.userUploadedPhoto {
+    display: block;
+    margin: auto;
+    width: 100%; /* Fill the width of the container */
+    height: 100%; /* Fill the height of the container */
+    z-index: 3; /* Ensure the image is above the upload button */
+    border: solid 1px black;
+}
+
+.upload-btn {
+    position: absolute; /* Position the upload button absolutely */
+    top: 50%; /* Align the top of the button to the middle of the container */
+    left: 50%; /* Align the left of the button to the middle of the container */
+    transform: translate(-50%, -50%); /* Center the button within the container */
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1; /* Ensure the button is above the image */
+}
+
+.upload-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Hide the file input */
+#fileUpload {
+    display: none;
+}
+
+/* Style the file input label */
+#fileUpload + span {
+    pointer-events: none;
+}
+
+.userUploadedCaption {
+    width: 95%;
+    height: 100px;
+    display: block;
+    margin: auto;
+    resize: none; /* Prevent resizing */
+    overflow-wrap: break-word; /* Allow long words to be broken and wrap onto the next line */
+    word-wrap: break-word; /* For older browsers */
+    text-indent: 10px; /* Set the indentation */
+    padding-top: 10px; /* Push the start of the text down by 10 pixels */
+    line-height: 1.5;
+}
+
+.upload-button-container{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px; /* Adjust margin as needed */
+}
+
+#postButton {
+    position: relative;
+    color: white;
+    background-color: #24c942;
+    border: none;
+    padding: 10px 20px;
+    font-size: 2vw;
+    width: fit-content;
+    height: 70px;
+    cursor: pointer;
+    bottom: 10px;
+}
+
+#clearButton {
+    color: white;
+    background-color: #209cff;
+    border: none;
+    width: 100px;
+    height: 50px;
+    font-size: 1.5vw;
+    cursor: pointer;
+}
+
+#closeModalButton {
+    color: rgb(255, 255, 255);
+    background-color: #ff0000;
+    border: none;
+    text-align: center;
+    width: 100px;
+    height: 50px;
+    font-size: 1.5vw;
+    cursor: pointer;
+}
+
+#postButton:hover{
+    background-color: #45a049;
+}
+#clearButton:hover{
+    background-color: #0056b3;
+}
+#closeModalButton:hover {
+    background-color: #cc0000; /* Darker green color on hover, adjust as needed */
+}
+
+/* Loading spinner styles */
+.loading-spinner {
+    display: none; /* Initially hidden */
+    position: absolute; /* Position the spinner container in the center of the modal */
+    top: 0;
+    left: 0;
+    width: 100%; /* Cover the entire modal */
+    height: 100%; /* Cover the entire modal */
+    background-color: rgba(0, 0, 0, 0.4); /* Slightly grayed out background color */
+    z-index: 10; /* Ensure the spinner is above other content */
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner {
+    /* Add your spinner styles here */
+    display: block;
+    margin: auto;
+    position: relative;
+    top: 35%;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #ccc; /* Gray border */
+    border-top: 5px solid #333; /* Darker border for the animated part */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Spin animation */
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Styles for the modal */
+.cameraImageModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0); /* Fully transparent initially */
+    opacity: 0; /* Start with opacity set to 0 */
+    transition: opacity 1s; /* Smooth transition for opacity */
+}
+
+.cameraImageModal.active {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background when active */
+    opacity: 1; /* Fully opaque when active */
+}
+
+.cameraModalTitle{
+    text-align: center;
+    margin: 5px;
+    width: 95%;
+    height: 50%;
+    height: auto;
+    color: white;
+    font-size: 42px;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 8px;
+    background-color: #0466c8;
+}
+
+.camera-image-container {
+    display: block;
+    margin: auto;
+    position: relative; /* Ensure the container is a positioning context for absolute positioning */
+    width: 90%; /* Adjust container width as needed */
+    height: 50%; /* Adjust container height as needed */
+}
+
+.userTakenPhoto {
+    display: block;
+    width: 100%; /*Fill the width of the container*/
+    height: 100%; /*Fill the height of the container*/
+    object-fit: cover; /*This ensures the video will cover the entire container while preserving aspect ratio*/
+    border: solid 1px black; /*Optional: add border to the video element if desired*/
+}
+
+.cameraPhotoDisplay {
+    display: none; /* Hide the img tag initially */
+    width: 100%; /*Fill the width of the container*/
+    height: 100%; /*Fill the height of the container*/
+    object-fit: cover; /*This ensures the video will cover the entire container while preserving aspect ratio*/
+    border: solid 1px black; /*Optional: add border to the video element if desired*/
+}
+
+
+.takePhoto-btn {
+    position: absolute; /* Position the upload button absolutely */
+    top: 50%; /* Align the top of the button to the middle of the container */
+    left: 50%; /* Align the left of the button to the middle of the container */
+    transform: translate(-50%, -50%); /* Center the button within the container */
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1; /* Ensure the button is above the image */
+}
+
+.takePhoto-btn:hover {
+    background-color: #0056b3;
+}
+
+.retakePhoto-btn{
+    display: none;
+    margin: auto;
+    width: fit-content;
+    height: fit-content;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.retakePhoto-btn:hover {
+    background-color: #0056b3;
+}
+
+.userCameraCaption {
+    width: 95%;
+    height: 100px;
+    display: block;
+    margin: auto;
+    resize: none; /* Prevent resizing */
+    overflow-wrap: break-word; /* Allow long words to be broken and wrap onto the next line */
+    word-wrap: break-word; /* For older browsers */
+    text-indent: 10px; /* Set the indentation */
+    padding-top: 10px; /* Push the start of the text down by 10 pixels */
+    line-height: 1.5;
+}
+
+.camera-button-container{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px; /* Adjust margin as needed */
+}
+
+#postCameraButton{
+    position: relative;;
+    color: white;
+    background-color: #24c942;
+    border: none;
+    padding: 10px 20px;
+    font-size: 34px;
+    width: fit-content;
+    height: fit-content;
+    cursor: pointer;
+    bottom: 10px;
+}
+
+#clearCameraButton{
+    color: white;
+    background-color: #209cff; /* Green color, adjust as needed */
+    border: none;
+    width: 100px;
+    height: 50px;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+#closeCameraModalButton {
+    color: rgb(255, 255, 255);
+    background-color: #ff0000; /* Green color, adjust as needed */
+    border: none;
+    text-align: center;
+    width: 100px;
+    height: 50px;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+#postCameraButton:hover{
+    background-color: #45a049;
+}
+#clearCameraButton:hover{
+    background-color: #0056b3;
+}
+#closeCameraModalButton:hover {
+    background-color: #cc0000; /* Darker green color on hover, adjust as needed */
+}
+
+@media screen and (max-width: 1550px) {
+    .modal-content{
+        width: 40%;
+    }
+
+}
+
+@media screen and (max-width: 756px) {
+    .sign-in-btn{
+        display: none;
+    }
+
+    .guest-sign-in{
+        display: none;
+    }
+}

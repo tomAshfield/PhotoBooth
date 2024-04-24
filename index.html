@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Booth</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="assets/web_icon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <img class="logo" src="assets/web_logo.png" alt="Logo"> <br>
+        <button class="sign-in-btn">Google Sign In</button>
+        <button class="guest-sign-in">Continue As Guest</button>
+    </div>
+
+    <div class="photoBooth" id="photoBooth">
+        <div class="photoBoothList">
+            <div class="logoContainer">
+                <img class="photoLogo" src="assets/web_logo.png">
+            </div>
+            <div class="dash"></div>
+            <div class="topics">
+                <button class="home" id="home">🏠 Home</button>
+                <button class="petpals" id="petpals">🐾 PetPals</button>
+                <button class="music" id="music">🎵 Music</button>
+                <button class="friends" id="friends">😊 Friends</button>
+                <button class="outdoors" id="outdoors">🏔️ Outdoors</button>
+                <button class="vacation" id="vacation">🏖️ Vacation</button>
+                <button class="projects" id="projects">🔧 Projects</button>
+                <button class="sparclabs" id="sparclabs">💻 SparcLabs</button>
+                <button class="devlog" id="devlog" style="display: none">🤫 Devlog</button>
+                <!-- Add more topics as needed -->
+            </div>
+        </div>
+        
+        <div class="photoBox">
+            <h1 class="photoBoothSection" id="photoBoothSection">#HOME</h1> 
+            <div class="postBox">
+                <div class="posts" id="posts">
+
+                    <br><br><br>
+                </div>
+
+                <div class="uploadImageModal" id="uploadImageModal">
+                    <div class="modal-content">
+                        <h1 class="uploadModalTitle">Upload An Image</h1><br><br>
+                        <div class="image-container">
+                            <img class="userUploadedPhoto" id="userUploadedPhoto">
+                            <label class="upload-btn" id="upload-btn">
+                                <span>Choose File</span>
+                                <input type="file" id="fileUpload" style="display: none;">
+                            </label>
+                        </div><br><br>
+                        <textarea class="userUploadedCaption" id="userUploadedCaption" placeholder="Add a caption..."></textarea>
+                        <br><br><br>
+                        <div class="upload-button-container">
+                            <button id="clearButton">Clear</button>
+                            <button id="postButton">✨ POST ✨</button>
+                            <button id="closeModalButton">Cancel</button>
+                        </div>
+                        <!-- Loading spinner -->
+                        <div id="loadingSpinner" class="loading-spinner">
+                            <!-- Add your loading animation here, e.g., an animated SVG or GIF -->
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cameraImageModal" id="cameraImageModal">
+                    <div class="modal-content">
+                        <h1 class="cameraModalTitle">Take A Photo</h1><br><br>
+                        <div class="camera-image-container">
+                            <video class="userTakenPhoto" id="userTakenPhoto" autoplay playsinline></video>
+                            <img class="cameraPhotoDisplay" id="cameraPhotoDisplay">
+                            <label class="takePhoto-btn" id="takePhoto-btn">
+                                <span>Take Photo</span><br>
+                            </label>
+                        </div>
+                        <br>
+                        <label class="retakePhoto-btn" id="retakePhoto-btn">
+                            <span id="photo">Retake Photo</span>
+                        </label>
+                        <br>
+                        <textarea class="userCameraCaption" id="userCameraCaption" placeholder="Add a caption..."></textarea>
+                        <br><br>
+                        <div class="camera-button-container">
+                            <button id="clearCameraButton">Clear</button>
+                            <button id="postCameraButton">✨ POST ✨</button>
+                            <button id="closeCameraModalButton">Cancel</button>
+                        </div>
+                        <!-- Loading spinner -->
+                        <div id="loadingSpinner2" class="loading-spinner">
+                            <!-- Add your loading animation here, e.g., an animated SVG or GIF -->
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>    
+            </div>
+        </div>
+        <div class="rightSide" id="rightSide">
+            <div class="currentlyOnline" id="currentlyOnline">
+                <h1 class="onlineTitle">CURRENTLY<br>SIGNED IN</h1>  
+            </div>
+            <div class="dash"></div>
+            <div class="onlineList" id="onlineList"></div>
+            <div class="modalBtn-container">
+                <div class="choice-container" id="choiceContainer">
+                        <button class="takePhotoChoice" id="takePhotoChoice">
+                            <span class="material-symbols-outlined" style="font-size:40px;">photo_camera</span>
+                        </button>
+
+                        <button class="addPhoto" id="addPhoto">
+                            <span class="material-symbols-outlined" style="font-size:40px; font-weight: 700;">add</span>
+                        </button>
+
+                        <button class="uploadPhotoChoice" id="uploadPhotoChoice">
+                            <span class="material-symbols-outlined" style="font-size:40px;">add_photo_alternate</span>
+                        </button>
+                </div>
+            </div>            
+            
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import{ getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js"
+        import{ getDatabase, ref, child, get, set, push, remove, update, onValue, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+        apiKey: "AIzaSyBMfFLmXCcBgreuukJBlf_DIAhDJn5KBbk",
+        authDomain: "photobooth-3b7ab.firebaseapp.com",
+        databaseURL: "https://photobooth-3b7ab-default-rtdb.firebaseio.com",
+        projectId: "photobooth-3b7ab",
+        storageBucket: "photobooth-3b7ab.appspot.com",
+        messagingSenderId: "586292171576",
+        appId: "1:586292171576:web:d61d9fd223d56bc43067cd"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        let photoBoothSection = "home/";
+
+        //--------------------------------------------------------------------------
+        //AUTHENTICATION
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Function to sign in with Google
+        function signInWithGoogle() {
+            return new Promise((resolve, reject) => {
+                // Sign in with Google using Firebase authentication
+                signInWithPopup(auth, provider)
+                    .then((result) => {
+                        // Authentication successful
+                        resolve(result.user); // Resolve the promise with the authenticated user
+                    })
+                    .catch((error) => {
+                        // An error occurred during authentication
+                        reject(error); // Reject the promise with the error
+                    });
+            });
+        }
+
+        // Event listener for the "Sign In" button
+        const signInButton = document.querySelector('.sign-in-btn');
+        var userObject = "";
+        signInButton.addEventListener('click', () => {
+            // Call signInWithGoogle function when the button is clicked
+            signInWithGoogle()
+                .then((user) => {
+                    // User is successfully logged in
+
+                    // Save the user object to grad their name
+                    userObject = user;
+
+                    requestCameraAccess();
+                    // Call function to add the user to the online list in the database
+                    addNewUserToDatabase(userObject);
+
+                    // Call function to start listening for changes in the online list
+                    listenForOnlineUsersChanges();
+
+                    // Request and display post data
+                    fetchAndReverseData();
+
+                    // Hide the main container and display signed-in sections
+                    const container = document.querySelector(".container");
+                    const photoBooth = document.querySelector(".photoBooth");
+                    const rightSide = document.querySelector(".rightSide");
+                    const addPhotoBtn = document.querySelector(".addPhoto");
+
+                    container.style.display = "none";
+                    photoBooth.style.display = "flex";
+                    rightSide.style.display = "flex";
+                    addPhotoBtn.style.display = "block";
+                })
+                .catch((error) => {
+                    console.error("Login error:", error);
+                });
+            });
+
+        // Add an event listener to the "Continue as Guest" button
+        const guestButton = document.querySelector('.guest-sign-in');
+        guestButton.addEventListener('click', continueAsGuest);
+        // Function to handle "Continue as Guest" feature
+        function continueAsGuest() {
+            // Sign in anonymously using Firebase Authentication
+            signInAnonymously(auth)
+                .then((userCredential) => {
+                    // Save the user object
+                    userObject = userCredential.user;
+                    
+                    // Call function to add the user to the online list in the database
+                    addNewUserToDatabase(userObject);
+
+                    // Call function to start listening for changes in the online list
+                    listenForOnlineUsersChanges();
+
+                    // Request and display post data
+                    fetchAndReverseData();
+
+                    // Hide the main container and display signed-in sections
+                    const container = document.querySelector(".container");
+                    const photoBooth = document.querySelector(".photoBooth");
+                    const rightSide = document.querySelector(".rightSide");
+                    const addPhotoBtn = document.querySelector(".addPhoto");
+
+                    container.style.display = "none";
+                    photoBooth.style.display = "flex";
+                    rightSide.style.display = "flex";
+                    addPhotoBtn.style.display = "block";
+                    alert("DISCLAMER: Guests (while apreciated for coming) can't post anything! Only signed in users can :)")
+                })
+                .catch((error) => {
+                    // Handle any errors that occur during anonymous sign-in
+                    console.error("Anonymous sign-in error:", error);
+                });
+        }
+        //--------------------------------------------------------------------------
+        //ADD PHOTO DIV CODE
+        let addPhotoCounter = 0;
+        document.getElementById('addPhoto').addEventListener('click', function () {
+            addPhotoCounter += 1;
+            if(addPhotoCounter % 2 == 1){
+                this.classList.toggle('active'); 
+                document.getElementById('choiceContainer').classList.toggle('active');
+                document.getElementById('takePhotoChoice').style.display = "block";
+                document.getElementById('uploadPhotoChoice').style.display = "block";
+            }
+            else{
+                this.classList.remove('active'); 
+                document.getElementById('takePhotoChoice').style.display = "none";
+                document.getElementById('uploadPhotoChoice').style.display = "none";
+                document.getElementById('choiceContainer').classList.remove('active');
+            }
+        })
+
+        // Event listener for the button click
+        const uploadPhotoButton = document.getElementById('uploadPhotoChoice');
+        uploadPhotoButton.addEventListener('click', function () {
+            // Check if the user has signed in with Google
+            const isGoogleUser = userObject.providerData && Array.isArray(userObject.providerData) && userObject.providerData.some(
+                provider => provider.providerId === "google.com"
+            );
+
+            if(isGoogleUser){
+                uploadImageModal.style.display = 'block'; // Show the modal
+                addPhotoCounter += 1;
+                document.getElementById('addPhoto').classList.remove('active');
+                document.getElementById('takePhotoChoice').style.display = "none";
+                document.getElementById('uploadPhotoChoice').style.display = "none";
+                document.getElementById('choiceContainer').classList.remove('active');
+                uploadImageModal.classList.toggle('active');
+                const loadingSpinner = document.getElementById("loadingSpinner");
+                loadingSpinner.style.display = "none";
+            }
+            else{
+                alert("Please Log In With Google To Create A Post!");
+            }
+            
+        });
+
+        const takePhotoButton = document.getElementById("takePhotoChoice");
+        takePhotoButton.addEventListener('click', function () {
+            // Check if the user has signed in with Google
+            const isGoogleUser = userObject.providerData && Array.isArray(userObject.providerData) && userObject.providerData.some(
+                provider => provider.providerId === "google.com"
+            );
+
+            if(isGoogleUser){
+                takeImageModal.style.display = 'block'; // Show the modal
+                addPhotoCounter += 1;
+                document.getElementById('addPhoto').classList.remove('active');
+                document.getElementById('takePhotoChoice').style.display = "none";
+                document.getElementById('uploadPhotoChoice').style.display = "none";
+                document.getElementById('choiceContainer').classList.remove('active');
+                takeImageModal.classList.toggle('active');
+                const loadingSpinner = document.getElementById("loadingSpinner2");
+                loadingSpinner.style.display = "none";
+            }
+            else{
+                alert("Please Log In With Google To Create A Post!");
+            }
+        })
+
+        //--------------------------------------------------------------------------
+        //UPLOAD IMAGE MODAL CODE
+        
+        const uploadImageModal = document.getElementById('uploadImageModal');
+        const postButton = document.getElementById("postButton");
+        postButton.addEventListener("click", uploadProcess);
+        const clearButton = document.getElementById('clearButton');
+        const closeModalButton = document.getElementById('closeModalButton');
+
+        // Event listener for the clear button click
+        clearButton.addEventListener('click', function () {
+            document.getElementById('userUploadedPhoto').src = "";
+            document.getElementById("userUploadedCaption").value = "";
+            document.getElementById("upload-btn").style.display = "block";
+            document.getElementById("fileUpload").value = "";
+        })
+
+        // Event listener for the close button click
+        closeModalButton.addEventListener('click', function () {
+            uploadImageModal.style.display = 'none'; // Hide the modal
+            document.getElementById("upload-btn").style.display = "block";
+            document.getElementById('userUploadedPhoto').src = "";
+            document.getElementById("userUploadedCaption").value = "";
+            document.getElementById("fileUpload").value = "";
+            uploadImageModal.classList.remove('active');
+        });
+
+        // Close the modal if user clicks outside of it
+        window.addEventListener('click', function (event) {
+            if (event.target == uploadImageModal) {
+                uploadImageModal.style.display = 'none'; // Hide the modal
+                document.getElementById("upload-btn").style.display = "block";
+                document.getElementById('userUploadedPhoto').src = "";
+                document.getElementById("userUploadedCaption").value = "";
+                document.getElementById("fileUpload").value = "";
+                uploadImageModal.classList.remove('active');
+            }
+        });
+
+        // Grabs the uploaded image and displays it to the user
+        document.getElementById('fileUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0]; // Get the selected file
+
+            if (file) {
+                const reader = new FileReader(); // Create a new FileReader object
+
+                reader.onload = function(e) {
+                    // Set the src attribute of the image tag to display the selected image
+                    document.getElementById('userUploadedPhoto').src = e.target.result;
+                    document.getElementById("upload-btn").style.display = "none";
+                    
+                };
+
+                // Read the selected file as a data URL
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Function to handle the upload process
+        async function uploadProcess() {
+            const loadingSpinner = document.getElementById("loadingSpinner");
+            loadingSpinner.style.display = "block";
+
+            // Get the file to upload (e.g., from an <input type="file" id="fileUpload" /> element)
+            const fileInput = document.getElementById("fileUpload");
+            const file = fileInput.files[0];
+
+            // Check if the file or caption is empty
+            const caption = document.getElementById("userUploadedCaption").value;
+            if (!file || caption.trim() === "") {
+                alert("Please fill out all fields");
+                loadingSpinner.style.display = "none";
+                return;
+            }
+
+            // Verify that the file is a valid image using the FileReader API
+            const isImageValid = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const image = new Image();
+                    image.onload = () => {
+                        // If the image loads successfully, the file is a valid image
+                        resolve(true);
+                    };
+                    image.onerror = () => {
+                        // If there's an error loading the image, the file is not a valid image
+                        resolve(false);
+                    };
+                    image.src = reader.result;
+                };
+                reader.onerror = () => {
+                    // If there's an error reading the file, assume it's not a valid image
+                    resolve(false);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // If the file is not a valid image, alert the user and stop the process
+            if (!isImageValid) {
+                alert("Please upload a valid image file (JPEG, PNG, or GIF).");
+                loadingSpinner.style.display = "none";
+                return;
+            }
+
+            // Current timestamp in milliseconds
+            const currentTimestamp = Date.now();
+            const currentDate = getCurrentDateFormatted();
+
+            // Create a reference to the Firebase Storage
+            const storage = getStorage();
+            const storageRef = sRef(storage, `Images/${currentTimestamp}`);
+
+            // Start the upload process
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            // Wait for the upload to be completed
+            await new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Track upload progress if needed
+                    },
+                    (error) => {
+                        // Handle errors during upload
+                        reject(error);
+                    },
+                    () => {
+                        // Upload completed successfully
+                        resolve();
+                    }
+                );
+            });
+
+            // Hide the loading spinner once the upload is complete
+            loadingSpinner.style.display = "none";
+
+            // Get the download URL of the uploaded file
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+                // Send the download URL somewhere (e.g., to a database)
+                uploadToDB(currentTimestamp.toString(), currentDate, downloadUrl, caption, userObject.displayName, photoBoothSection);
+
+                // Alert the user of the successful upload
+                document.getElementById('closeModalButton').click();
+            });
+        }
+
+
+
+        //--------------------------------------------------------------------------
+        //TAKE PHOTO MODAL CODE
+        const takeImageModal = document.getElementById("cameraImageModal");
+        const userTakenPhoto = document.getElementById('userTakenPhoto');
+
+        const takePhotoBtn = document.getElementById('takePhoto-btn');
+        takePhotoBtn.addEventListener('click', handleTakePhoto);
+
+        const retakePhotoBtn = document.getElementById('retakePhoto-btn');
+        const cameraCaption = document.getElementById('userCameraCaption');
+
+        const clearCameraButton = document.getElementById('clearCameraButton');
+        const postCameraButton = document.getElementById('postCameraButton');
+        const closeCameraModalButton = document.getElementById('closeCameraModalButton');
+        
+
+        // Flag to track the state of the button clicks
+        let isStreaming = false;  // Indicates whether the camera is currently streaming
+        // Video element to display the camera stream
+        let video;
+
+        // Close the modal if user clicks outside of it
+        window.addEventListener('click', function (event) {
+            if (event.target == takeImageModal) {
+                takeImageModal.style.display = 'none'; // Hide the modal
+                takeImageModal.classList.remove('active');
+                
+                // Check if video has been initialized and has a srcObject
+                if (video && video.srcObject) {
+                    // Stop the video stream if srcObject is present
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
+
+                // Reset the streaming flag to false
+                isStreaming = false;
+
+                // Hide the camera image and reset the src
+                document.getElementById('cameraPhotoDisplay').style.display = "none";
+                document.getElementById('cameraPhotoDisplay').src = "";
+
+                // Display video tag while clearing it
+                userTakenPhoto.style.display = "block";
+                userTakenPhoto.srcObject = null;
+
+                // Reset the take photo button
+                takePhotoBtn.style.top = "50%";
+                takePhotoBtn.style.display = "block";
+
+                // Hide this button
+                retakePhotoBtn.style.display = "none"
+
+                cameraCaption.style.marginTop = '0';
+                cameraCaption.value = "";
+
+            }
+        });
+
+        // Function to handle the "Take Photo" button click
+        function handleTakePhoto() {
+            // Get the takePhotoBtn element
+            const takePhotoBtn = document.getElementById('takePhoto-btn');
+            
+            if (!isStreaming) {
+                // First click: request camera access and stream the video
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then((stream) => {
+                        // Create a video element to display the camera stream
+                        cameraCaption.style.marginTop = '39.5px';
+                        video = document.createElement('video');
+                        video.srcObject = stream;
+                        video.play();
+
+                        // Get the userTakenPhoto element
+                        const userTakenPhoto = document.getElementById('userTakenPhoto');
+                        // Stream the video to the userTakenPhoto element
+                        userTakenPhoto.srcObject = stream;
+
+                        // Move the button down out of the image container
+                        takePhotoBtn.style.top = '110%';  // Adjust top as needed
+
+                        // Set the streaming flag to true
+                        isStreaming = true;
+                    })
+                    .catch((error) => {
+                        // Handle camera access error
+                        console.error('Error accessing the camera:', error);
+                        alert('Could not access the camera. Please allow camera access and try again.');
+                    });
+            } else {
+                // Second click: capture a frame from the video and display the image
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                // Draw the current frame from the video to the canvas
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convert canvas content to base64 image data URL
+                const imageDataUrl = canvas.toDataURL('image/png');
+
+                // Set the src attribute of the cameraPhotoDisplay element to the image data URL
+                const cameraPhotoDisplay = document.getElementById('cameraPhotoDisplay');
+                cameraPhotoDisplay.src = imageDataUrl;
+
+                // Once the src is set, display the cameraPhotoDisplay element and hide the video element
+                cameraPhotoDisplay.style.display = 'block'; // Display the img element
+                const userTakenPhoto = document.getElementById('userTakenPhoto');
+                userTakenPhoto.style.display = 'none'; // Hide the video element
+
+                // Stop the video stream
+                video.srcObject.getTracks().forEach(track => track.stop());
+
+                // Reset the streaming flag to false
+                isStreaming = false;
+
+                // Move the button back to its original position
+                takePhotoBtn.style.display = "none";
+                retakePhotoBtn.style.display = "block";
+                cameraCaption.style.marginTop = '0';
+            }
+        }
+
+        // Function to prompt the user for camera access
+        function requestCameraAccess() {
+            // Use getUserMedia to request access to the camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    // If access is granted, you can handle the stream here
+                    console.log('Camera access granted. Thank you!');
+                    // You can use the stream for other purposes, such as displaying the video in a video element
+                    // For now, just stop the stream as it's not needed yet
+                    stream.getTracks().forEach(track => track.stop());
+                })
+                .catch((error) => {
+                    // Handle any errors, such as the user denying access
+                    console.error('Error accessing the camera:', error);
+                    alert('Could not access the camera. Please allow camera access in your browser settings.');
+                });
+        }
+
+        retakePhotoBtn.addEventListener('click', function () {
+            //swap the displays
+            document.getElementById('cameraPhotoDisplay').style.display = "none";
+            document.getElementById('userTakenPhoto').style.display = "block";
+
+            //change the displayed button
+            retakePhotoBtn.style.display = "none";
+            takePhotoBtn.style.display = "block";
+            
+            //get rid of previous photo
+            document.getElementById('cameraPhotoDisplay').src = "";
+
+            //function call
+            handleTakePhoto();
+        })
+
+        // Event listener for the clear button click
+        clearCameraButton.addEventListener('click', function () {
+            // Check if video has been initialized and has a srcObject
+            if (video && video.srcObject) {
+                // Stop the video stream if srcObject is present
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+
+            // Hide the camera image and reset the src
+            document.getElementById('cameraPhotoDisplay').style.display = "none";
+                document.getElementById('cameraPhotoDisplay').src = "";
+
+                // Display video tag while clearing it
+                userTakenPhoto.style.display = "block";
+                userTakenPhoto.srcObject = null;
+
+                // Reset the take photo button
+                takePhotoBtn.style.top = "50%";
+                takePhotoBtn.style.display = "block";
+
+                // Hide this button
+                retakePhotoBtn.style.display = "none"
+
+                cameraCaption.style.marginTop = '0';
+                cameraCaption.value = "";
+        })
+        
+        closeCameraModalButton.addEventListener('click', function () {
+            takeImageModal.style.display = 'none'; // Hide the modal
+                takeImageModal.classList.remove('active');
+                
+                // Check if video has been initialized and has a srcObject
+                if (video && video.srcObject) {
+                    // Stop the video stream if srcObject is present
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
+
+                // Reset the streaming flag to false
+                isStreaming = false;
+
+                // Hide the camera image and reset the src
+                document.getElementById('cameraPhotoDisplay').style.display = "none";
+                document.getElementById('cameraPhotoDisplay').src = "";
+
+                // Display video tag while clearing it
+                userTakenPhoto.style.display = "block";
+                userTakenPhoto.srcObject = null;
+
+                // Reset the take photo button
+                takePhotoBtn.style.top = "50%";
+                takePhotoBtn.style.display = "block";
+
+                // Hide this button
+                retakePhotoBtn.style.display = "none"
+
+                cameraCaption.style.marginTop = '0';
+                cameraCaption.value = "";
+        })
+
+        postCameraButton.addEventListener('click', function(){
+
+            const loadingSpinner = document.getElementById("loadingSpinner2");
+            loadingSpinner.style.display = "block";
+
+            
+            // Get the image element and the caption
+            const cameraPhotoDisplay = document.getElementById('cameraPhotoDisplay');
+            const userCameraCaption = document.getElementById('userCameraCaption');
+            const timestamp = Date.now();
+            const currentDate = getCurrentDateFormatted();
+            
+            // Check if an image is present
+            if (!cameraPhotoDisplay.src || retakePhotoBtn.style.display == "none" || userCameraCaption.value == "") {
+                alert("Please fill out all fields");
+                loadingSpinner.style.display = "none";
+                return;
+            }
+
+            // Create a reference to the storage location where the image will be stored
+            const storage = getStorage();
+            const imageRef = sRef(storage, `Images/${timestamp}.jpg`);
+
+            // Convert the image data URL to a Blob
+            fetch(cameraPhotoDisplay.src)
+                .then(response => response.blob())
+                .then(imageBlob => {
+                    // Upload the image Blob to Firebase Storage
+                    uploadBytesResumable(imageRef, imageBlob)
+                        .then(() => {
+                            // Get the download URL of the uploaded image
+                            return getDownloadURL(imageRef);
+                        })
+                        .then(downloadURL => {
+                            uploadToDB(timestamp, currentDate, downloadURL, userCameraCaption.value, userObject.displayName, photoBoothSection);
+                            // Hide the loading spinner once the upload is complete
+                            loadingSpinner.style.display = "none";
+                            closeCameraModalButton.click();
+                        })
+                        .catch(error => {
+                            alert("Error uploading image to Firebase Storage:", error);
+                        });
+                })
+                .catch(error => {
+                    console.error("Error converting image to Blob:", error);
+                    // Hide the loading spinner once the upload is complete
+                    loadingSpinner.style.display = "none";
+                });
+
+            
+        })
+        //--------------------------------------------------------------------------
+        //GENERAL DATABASE FUNCTIONS
+        function uploadToDB(timestamp, date, imageUrl, caption, user, photoBoothSection){
+            const database = getDatabase();
+            set(ref(database, photoBoothSection + timestamp), {
+                postID: timestamp,
+                CurrentDate: date,
+                User: user,
+                Image: imageUrl,
+                Caption: caption,
+                Hearts: 0,
+                Laughs: 0,
+                ThumbsUp: 0
+            })
+        }
+        
+        // Function to listen for new child additions in the database
+        function listenForNewPosts() {
+            // Get a reference to the Firebase Realtime Database
+            const db = getDatabase();
+            
+            // Specify the path to the data you want to listen for changes
+            const dataRef = ref(db, photoBoothSection);
+            
+            // Listen for new child additions at the specified path
+            onChildAdded(dataRef, (childSnapshot) => {
+                // When a new child node is added, call the fetchAndReverseData function
+                fetchAndReverseData();
+            }, (error) => {
+                // Handle errors during the event listening
+                console.error("Error listening for new posts:", error);
+            });
+        }
+
+        //--------------------------------------------------------------------------
+        //DATA RETRIEVAL HANDLING
+        // Function to fetch data from Firebase Realtime Database, reverse it, and log it to the console
+        // Fetch all data function will remain the same
+        function fetchAndReverseData() {
+            // Get a reference to the Firebase Realtime Database
+            const db = getDatabase();
+
+            // Specify the path to the data you want to fetch
+            const dataRef = ref(db, photoBoothSection);
+
+            // Initialize an array to store the data
+            let dataList = [];
+
+            // Listen for data changes at the specified path
+            onValue(dataRef, (snapshot) => {
+                // Iterate through each instance in the data list
+                snapshot.forEach((childSnapshot) => {
+                    const dataInstance = childSnapshot.val();
+
+                    // Check if a post with the same ID already exists
+                    const existingPost = document.getElementById(dataInstance.postID);
+                    
+                    // Only add the post if it doesn't already exist
+                    if (!existingPost) {
+                        createPost(dataInstance);
+                    }
+                });
+            }, (error) => {
+                // Handle errors during data fetching
+                console.error("Error fetching data from Firebase Realtime Database:", error);
+            });
+        }
+
+        //--------------------------------------------------------------------------
+        //POST CODE
+
+        //Increment Reactions
+        function incrementCounter(counterId) {
+            // Get the counter element by its ID
+            const counterElement = document.getElementById(counterId);
+            
+            // Parse the current counter value, increment it, and set the new value
+            const currentCounter = parseInt(counterElement.innerText);
+            const newCounter = currentCounter + 1;
+            counterElement.innerText = newCounter;
+            
+            // Split the counter ID to extract the reaction type and postID
+            const [reactionType, postID] = counterId.split('_');
+            
+            // Create a reference to the Firebase Realtime Database for the specific post
+            const db = getDatabase();
+            const postRef = ref(db, photoBoothSection + postID);
+            
+            // Update the counter for the specific reaction type in the database
+            const updateData = {};
+            updateData[reactionType] = newCounter;
+            update(postRef, updateData)
+                .then(() => {
+                    console.log(`Successfully updated ${reactionType} counter for postID ${postID}`);
+                })
+                .catch((error) => {
+                    console.error(`Error updating ${reactionType} counter for postID ${postID}:`, error);
+                });
+        }
+
+        function createPost(dataInstance) {
+            // Check if the user has signed in with Google
+
+            // Create a new div element with the class "post"
+            const newPost = document.createElement('div');
+            newPost.classList.add('post');
+            newPost.id = dataInstance.postID;
+            
+            // Set the image src attribute and class
+            const postImage = document.createElement('img');
+            postImage.classList.add('postImg');
+            postImage.src = dataInstance.Image;
+            
+            // Append the image to the new post
+            newPost.appendChild(postImage);
+            
+            // Create a div for the reactions and set its class
+            const reactionsDiv = document.createElement('div');
+            reactionsDiv.classList.add('reactions');
+            
+            // Create a function to add a reaction section
+            function addReaction(reactionType, counter) {
+                // Create a div for the reaction and set its ID based on the postID and reactionType
+                const reactionDiv = document.createElement('div');
+                reactionDiv.classList.add('reaction');
+                reactionDiv.id = `${reactionType}Reaction_${dataInstance.postID}`;
+                
+                // Create an image element for the reaction icon
+                const reactionIcon = document.createElement('img');
+                reactionIcon.classList.add('reactionIcon'); // Add this class for hover effect
+                reactionIcon.alt = reactionType;
+                
+                // Set the src attribute based on the reaction type
+                switch (reactionType) {
+                    case 'Hearts':
+                        reactionIcon.src = 'assets/heart_icon.png';
+                        break;
+                    case 'Laughs':
+                        reactionIcon.src = 'assets/laugh_icon.png';
+                        break;
+                    case 'ThumbsUp':
+                        reactionIcon.src = 'assets/thumbsUp_icon.png';
+                        break;
+                }
+                
+                // Create a span element for the counter and set its ID based on the postID and reactionType
+                const counterSpan = document.createElement('span');
+                counterSpan.id = `${reactionType}_${dataInstance.postID}`;
+                counterSpan.innerText = counter;
+                
+                // Append the reaction icon and counter span to the reaction div
+                reactionDiv.appendChild(reactionIcon);
+                reactionDiv.appendChild(counterSpan);
+                
+                // Append the reaction div to the reactions div
+                reactionsDiv.appendChild(reactionDiv);
+                
+                // Add an event listener to the reaction div to call incrementCounter on click
+                reactionDiv.addEventListener('click', () => incrementCounter(counterSpan.id));
+            }
+            
+            // Add heart, laugh, and thumbs up reactions with counters
+            addReaction('Hearts', dataInstance.Hearts);
+            addReaction('Laughs', dataInstance.Laughs);
+            addReaction('ThumbsUp', dataInstance.ThumbsUp);
+            
+            // Append the reactions div to the new post
+            newPost.appendChild(reactionsDiv);
+            
+            // Create a paragraph element for the post description
+            const postDesc = document.createElement('p');
+            postDesc.classList.add('postDesc');
+
+            // Create a strong element for the username and colon, and set its style to bold and underlined
+            const strongTag = document.createElement('strong');
+            strongTag.innerText = `${dataInstance.User}:`;
+            
+            // Append the strong element to the post description
+            postDesc.appendChild(strongTag);
+
+            // Append the caption text to the post description
+            postDesc.appendChild(document.createTextNode(" " + dataInstance.Caption));
+
+            // Append the post description to the new post
+            newPost.appendChild(postDesc);
+            
+            // Create a span element for the current date
+            const currentDateSpan = document.createElement('span');
+            currentDateSpan.classList.add('currentDate');
+            currentDateSpan.innerText = dataInstance.CurrentDate;
+            
+            // Append the current date span to the right of the reactions div
+            reactionsDiv.appendChild(currentDateSpan);
+            
+            // Append the new post to the div with the class "postBox"
+            const postBox = document.querySelector('.posts');
+            if (postBox) {
+                postBox.insertBefore(newPost, postBox.firstChild); // Insert new post above existing posts
+            }
+        }
+
+        //------------------------------------------------------------------------------------------
+        //SECTION FUNCTIONS
+        // Function to handle button click events
+        function handleButtonClick(event) {
+            // Get the clicked button's text content
+            const clickedButtonText = event.target.id;
+            const newSection = clickedButtonText + "/";
+            if(newSection == photoBoothSection){
+                return;
+            }
+
+            //Change the pages color
+            changeColors(clickedButtonText);
+
+            const postsDiv = document.getElementById('posts');
+            postsDiv.innerHTML = ''; // Set the inner HTML of the posts div to empty
+        
+            // Create three <br> elements
+            const br1 = document.createElement('br');
+            const br2 = document.createElement('br');
+
+            // Append the <br> elements to the posts div
+            postsDiv.appendChild(br1);
+            postsDiv.appendChild(br2);
+
+            // Remove emojis and spaces from the clicked button's text content
+            const uppercasedText = clickedButtonText.toUpperCase();
+
+            // Update the global variable photoBoothSection and set the h1 tag's innerHTML
+            photoBoothSection = newSection;
+            document.getElementById('photoBoothSection').innerHTML = `#${uppercasedText}`;
+
+            // Call the fetchAndReverseData function with the new photoBoothSection value
+            fetchAndReverseData();
+        }
+
+        // Add event listeners to the buttons in the topics div
+        const buttons = document.querySelectorAll('.topics button');
+        buttons.forEach(button => {
+            button.addEventListener('click', handleButtonClick);
+        });
+
+        function changeColors(buttonID) {
+            const mainBG = document.getElementById('photoBooth');
+            const addPhoto = document.getElementById('addPhoto');
+            const takePhotoChoice = document.getElementById('takePhotoChoice');
+            const uploadPhotoChoice = document.getElementById('uploadPhotoChoice');
+
+            // Create an object to map button IDs to colors and hover colors
+            const colors = {
+                'home': {
+                    backgroundImage: 'linear-gradient(to bottom, #00b4d8, #001f3f)',
+                    buttonColor: '#00b4d8',
+                    hoverColor: '#007bb6', // Define hover color based on button color
+                },
+                'music': {
+                    backgroundImage: 'linear-gradient(to top, #123456 0%, #abcdef 100%)',
+                    buttonColor: '#ff7f50',
+                    hoverColor: '#ff5530', // Define hover color based on button color
+                },
+                'petpals': {
+                    backgroundImage: 'linear-gradient(to top, #7b4397 0%, #f3f4f6 100%)',
+                    buttonColor: '#4a90e2',
+                    hoverColor: '#2b78d8', // Define hover color based on button color
+                },
+                'friends': {
+                    backgroundImage: 'linear-gradient(to top, #ff9a9e 0%, #fecfef 100%)',
+                    buttonColor: '#ff4081',
+                    hoverColor: '#ff1744', // Define hover color based on button color
+                },
+                'outdoors': {
+                    backgroundImage: 'linear-gradient(to top, #2af598 0%, #009efd 100%)',
+                    buttonColor: '#00b894',
+                    hoverColor: '#00a676', // Define hover color based on button color
+                },
+                'vacation': {
+                    backgroundImage: 'linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%)',
+                    buttonColor: '#ff6f61',
+                    hoverColor: '#ff4f3a', // Define hover color based on button color
+                },
+                'projects': {
+                    backgroundImage: 'linear-gradient(to top, #3a7bd5 0%, #00d2ff 100%)',
+                    buttonColor: '#3b3b3b',
+                    hoverColor: '#2b2b2b', // Define hover color based on button color
+                },
+                'sparclabs': {
+                    backgroundImage: 'linear-gradient(to top, #FFD100 0%, #00539B 100%)',
+                    buttonColor: '#00539B',
+                    hoverColor: '#004080', // Define hover color based on button color
+                },
+                'devlog': {
+                    backgroundImage: 'linear-gradient(to top, #209cff 0%, #68e0cf 100%)',
+                    buttonColor: '#1a73e8',
+                    hoverColor: '#0049ff', // Define hover color based on button color
+                },
+            };
+
+            // Get the selected colors and hover color based on the button ID
+            const selectedColors = colors[buttonID];
+
+            if (selectedColors) {
+                // Remove any existing reveal animation class
+                mainBG.classList.remove('reveal-gradient');
+                
+                // Set the new background image
+                mainBG.style.backgroundImage = selectedColors.backgroundImage;
+                
+                // Add the reveal-gradient class to trigger the animation
+                mainBG.classList.add('reveal-gradient');
+                
+                // Set the button colors
+                addPhoto.style.backgroundColor = selectedColors.buttonColor;
+                takePhotoChoice.style.backgroundColor = selectedColors.buttonColor;
+                uploadPhotoChoice.style.backgroundColor = selectedColors.buttonColor;
+
+                // Apply the hover color to each button
+                addPhoto.addEventListener('mouseover', () => {
+                    addPhoto.style.backgroundColor = selectedColors.hoverColor;
+                });
+
+                addPhoto.addEventListener('mouseout', () => {
+                    addPhoto.style.backgroundColor = selectedColors.buttonColor;
+                });
+
+                takePhotoChoice.addEventListener('mouseover', () => {
+                    takePhotoChoice.style.backgroundColor = selectedColors.hoverColor;
+                });
+
+                takePhotoChoice.addEventListener('mouseout', () => {
+                    takePhotoChoice.style.backgroundColor = selectedColors.buttonColor;
+                });
+
+                uploadPhotoChoice.addEventListener('mouseover', () => {
+                    uploadPhotoChoice.style.backgroundColor = selectedColors.hoverColor;
+                });
+
+                uploadPhotoChoice.addEventListener('mouseout', () => {
+                    uploadPhotoChoice.style.backgroundColor = selectedColors.buttonColor;
+                });
+            }
+        }
+
+        //------------------------------------------------------------------------------------------
+        //DATE FUNCTION
+        function getCurrentDateFormatted() {
+            // Create a new Date object representing the current date and time
+            const currentDate = new Date();
+            
+            // Extract the day, month, and year from the date
+            let day = currentDate.getDate();
+            let month = currentDate.getMonth() + 1; // Months are zero-indexed, so add 1
+            let year = currentDate.getFullYear();
+            
+            // Convert day, month, and year to strings with two digits
+            // Pad single-digit day and month values with leading zeros
+            day = String(day).padStart(2, '0');
+            month = String(month).padStart(2, '0');
+            year = String(year).slice(-2); // Use only the last two digits of the year
+            
+            // Format the date as "xx/xx/xx" (month/day/year)
+            const formattedDate = `${month}/${day}/${year}`;
+            
+            // Return the formatted date
+            return formattedDate;
+        }
+
+        //------------------------------------------------------------------------------------------
+        //CURRENTLY ONLINE CODE
+
+        // Function to add a new user to the Firebase database
+        function addNewUserToDatabase(userObject) {
+            const db = getDatabase();
+            const userRef = ref(db, 'currentlyOnlineUsers/' + userObject.uid);
+            const userIconList = ["userIcons/armadillo.png", "userIcons/bear.png", "userIcons/deer.png", "userIcons/frog.png", "userIcons/jaguar.png", "userIcons/macaw.png", "userIcons/panda-bear.png", "userIcons/penguin.png"]
+
+            // Generate a random index within the range of the list's length
+            const randomIndex = Math.floor(Math.random() * userIconList.length);
+
+            // Select a random user icon from the list using the random index
+            const randomUserIcon = userIconList[randomIndex];
+
+            // Check if the user has signed in with Google
+            const isGoogleUser = userObject.providerData && Array.isArray(userObject.providerData) && userObject.providerData.some(
+                provider => provider.providerId === "google.com"
+            );
+
+            if (isGoogleUser) {
+                // Create an object for the user with their actual photo URL and display name
+                const regularUserData = {
+                    photoURL: randomUserIcon,
+                    displayName: userObject.displayName,
+                };
+
+                // Add the regular user data to the Firebase database
+                set(userRef, regularUserData)
+                    .then(() => {
+                        console.log(`User name ${userObject.displayName} added to the database.`);
+                    })
+                    .catch((error) => {
+                        console.error(`Error adding user name:`, error);
+                    });
+            } else {
+                // Generate a random index within the range of the list's length
+                const randomIndex = Math.floor(Math.random() * userIconList.length);
+                // Select a random user icon from the list using the random index
+                const randomUserIcon = userIconList[randomIndex];
+
+                // Create an object for the anonymous user with random icon and "Guest" as the display name
+                const anonymousUserData = {
+                    photoURL: randomUserIcon,
+                    displayName: "Guest",
+                };
+
+                // Add the anonymous user data to the Firebase database
+                set(userRef, anonymousUserData)
+                    .then(() => {
+                        console.log(`Anonymous user data added to the database.`);
+                    })
+                    .catch((error) => {
+                        console.error(`Error adding anonymous user data:`, error);
+                    });
+            }
+        }
+
+        // Function to remove a user from the Firebase database
+        function removeUserFromDatabase(userID) {
+            const db = getDatabase();
+            const userRef = ref(db, 'currentlyOnlineUsers/' + userID);
+
+            remove(userRef);
+        }
+
+        // Function to listen for changes in the currently online list
+        function listenForOnlineUsersChanges() {
+            const db = getDatabase();
+            const onlineUsersRef = ref(db, 'currentlyOnlineUsers');
+
+            onValue(onlineUsersRef, (snapshot) => {
+                const onlineUsersData = snapshot.val();
+                clearOnlineList(); // Clear the online list before updating
+
+                if (onlineUsersData) {
+                    Object.entries(onlineUsersData).forEach(([userID, userData]) => {
+                        addUserToOnlineList(userData.photoURL, userData.displayName, userID);
+                    });
+                }
+            });
+        }
+
+        function addUserToOnlineList(profileImageUrl, userName, userID) {
+            // Get the onlineList container
+            const onlineList = document.getElementById('onlineList');
+
+            // Create a span element for the user
+            const userSpan = document.createElement('span');
+            userSpan.classList.add('user');
+            userSpan.id = userID;
+
+            // Create an img element for the circular profile image
+            const profileImage = document.createElement('img');
+            profileImage.classList.add('profileImage');
+            profileImage.src = profileImageUrl; // Set the image source to the provided profile image URL
+            profileImage.alt = `${userName}'s profile picture`; // Set alt text for accessibility
+
+            // Create a span element for the user name
+            const userNameSpan = document.createElement('span');
+            userNameSpan.classList.add('userName');
+            userNameSpan.textContent = userName; // Set the text content to the provided user name
+
+            // Append the profile image and user name to the user span
+            userSpan.appendChild(profileImage);
+            userSpan.appendChild(userNameSpan);
+
+            // Append the user span to the onlineList container
+            onlineList.appendChild(userSpan);
+        }
+
+        function clearOnlineList(){
+            const onlineList = document.getElementById('onlineList');
+            onlineList.innerHTML = "";
+        }
+
+        // Listen for the beforeunload event
+        // Function to handle tab closure or refresh
+        window.addEventListener('beforeunload', (event) => {
+            if (userObject && userObject.uid) {
+                removeUserFromDatabase(userObject.uid);
+            }
+        });
+            
+        // Function to add test data to the online users list in the Firebase database
+        /*function addTestDataToOnlineUsersList() {
+            // Get a reference to the Firebase Realtime Database
+            const db = getDatabase();
+
+            // Define an array of test users
+            const testUsers = [
+                {
+                    uid: "user1",
+                    name: "Test User 1",
+                    profileImageUrl: "userIcons/armadillo.png"
+                },
+                {
+                    uid: "user2",
+                    name: "Test User 2",
+                    profileImageUrl: "userIcons/jaguar.png"
+                },
+                {
+                    uid: "user3",
+                    name: "Test User 3",
+                    profileImageUrl: "userIcons/macaw.png"
+                },
+                {
+                    uid: "user4",
+                    name: "Test User 4",
+                    profileImageUrl: "userIcons/penguin.png"
+                }, 
+                {
+                    uid: "user5",
+                    name: "Test User 5",
+                    profileImageUrl: "userIcons/penguin.png"
+                }, 
+                {
+                    uid: "user6",
+                    name: "Test User 6",
+                    profileImageUrl: "userIcons/penguin.png"
+                }, 
+                {
+                    uid: "user7",
+                    name: "Test User 7",
+                    profileImageUrl: "userIcons/penguin.png"
+                }, 
+                {
+                    uid: "user8",
+                    name: "Test User 8",
+                    profileImageUrl: "userIcons/penguin.png"
+                }, 
+            ];
+
+            // Iterate through each test user
+            testUsers.forEach((user) => {
+                // Create a reference to the 'currentlyOnlineUsers' route in the database with the user's UID as the branch key
+                const userRef = ref(db, 'currentlyOnlineUsers/' + user.uid);
+
+                // Add the user data to the database under the user's UID
+                set(userRef, {
+                    displayName: user.name,
+                    photoURL: user.profileImageUrl
+                })
+                .then(() => {
+                    console.log(`Test data for ${user.name} added to the online users list.`);
+                })
+                .catch((error) => {
+                    console.error(`Error adding test data for ${user.name}:`, error);
+                });
+            });
+        }*/
+        //------------------------------------------------------------------------------------------
+        //HOMEPAGE
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const images = ["assets/homepage_img8.jpeg", "assets/homepage_img9.jpeg", "assets/homepage_img5.webp", "assets/homepage_img7.jpeg"]; // Replace with your image filenames
+            const container = document.querySelector(".container");
+            let index = 0; // Variable to keep track of the current image index
+
+            // Function to change background image
+            function changeBackground() {
+                container.style.backgroundImage = `url(${images[index]})`;
+                index = (index + 1) % images.length; // Move to the next image index, looping back to the beginning if necessary
+            }
+
+            // Function to loop through background images
+            function backgroundLoop() {
+                changeBackground(); // Change background initially
+                setInterval(changeBackground, 4000); // Set interval to change background every 3 seconds
+            }
+
+            // Call backgroundLoop function initially
+            backgroundLoop();
+        });
+    </script>
+</body>
+</html>
