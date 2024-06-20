@@ -20,6 +20,12 @@
         <button class="guest-sign-in">Continue As Guest</button>
     </div>
 
+    <div class="phoneScreen">
+        <h1 class="sorry">Phone usability has yet to be implemented</h1>
+        <br>
+        <h1 class="explination">I need a job first :D</h1>
+    </div>
+
     <div class="photoBooth" id="photoBooth">
         <div class="photoBoothList">
             <div class="logoContainer">
@@ -28,20 +34,24 @@
             <div class="dash"></div>
             <div class="topics">
                 <button class="home" id="home">🏠 Home</button>
-                <button class="petpals" id="petpals">🐾 PetPals</button>
                 <button class="music" id="music">🎵 Music</button>
+                <button class="memes" id="memes">😎 Memes</button>
+                <button class="petpals" id="petpals">🐾 PetPals</button>
                 <button class="friends" id="friends">😊 Friends</button>
                 <button class="outdoors" id="outdoors">🏔️ Outdoors</button>
                 <button class="vacation" id="vacation">🏖️ Vacation</button>
                 <button class="projects" id="projects">🔧 Projects</button>
                 <button class="sparclabs" id="sparclabs">💻 SparcLabs</button>
                 <button class="devlog" id="devlog" style="display: none">🤫 Devlog</button>
-                <!-- Add more topics as needed -->
             </div>
         </div>
         
         <div class="photoBox">
-            <h1 class="photoBoothSection" id="photoBoothSection">#HOME</h1> 
+            <div class="photoHeader">
+                <h1 class="photoBoothSection" id="photoBoothSection">#HOME</h1> 
+                <button class="myPostsBtn" id="myPostsBtn">My Posts</button>
+            </div>
+            
             <div class="postBox">
                 <div class="posts" id="posts">
 
@@ -55,11 +65,11 @@
                             <img class="userUploadedPhoto" id="userUploadedPhoto">
                             <label class="upload-btn" id="upload-btn">
                                 <span>Choose File</span>
-                                <input type="file" id="fileUpload" style="display: none;">
+                                <input type="file" id="fileUpload" accept=".jpg, .jpeg, .png, .gif" style="display: none;">
                             </label>
                         </div><br><br>
                         <textarea class="userUploadedCaption" id="userUploadedCaption" placeholder="Add a caption..."></textarea>
-                        <br><br><br>
+                        <br><br>
                         <div class="upload-button-container">
                             <button id="clearButton">Clear</button>
                             <button id="postButton">✨ POST ✨</button>
@@ -101,7 +111,49 @@
                             <div class="spinner"></div>
                         </div>
                     </div>
-                </div>    
+                </div>
+                
+                <div class="editPostModal" id="editPostModal">
+                    <div class="modal-content">
+                        <h1 class="editModalTitle">Edit Your Post</h1><br>
+                        <div class="image-container" id="currentImageContainer">
+                            <img class="currentPostPhoto" id="currentPostPhoto" src="">
+                        </div>
+                        <div class="image-container" id="editImageContainer" style="display: none;">
+                            <img class="userUploadedPhoto" id="editUserUploadedPhoto">
+                            <label class="upload-btn" id="editUploadBtn">
+                                <span>Choose File</span>
+                                <input type="file" id="editFileUpload" accept=".jpg, .jpeg, .png, .gif" style="display: none;">
+                            </label>
+                        </div>
+                        <div class="camera-image-container" id="editCameraContainer" style="display: none;">
+                            <video class="userTakenPhoto" id="editUserTakenPhoto" autoplay playsinline></video>
+                            <img class="cameraPhotoDisplay" id="editCameraPhotoDisplay">
+                            <label class="takePhoto-btn" id="editTakePhotoBtn">
+                                <span>Take Photo</span><br>
+                            </label>
+                        </div>
+                        <br>
+                        <div class="edit-options">
+                            <button class="edit-option-btn" id="uploadNewPhotoBtn">Upload New Photo</button>
+                            <button class="edit-option-btn" id="deletePostBtn">Delete Post</button>
+                            <button class="edit-option-btn" id="takeNewPhotoBtn">Take New Photo</button>
+                        </div>
+                        <textarea class="userUploadedCaption" id="editUserUploadedCaption" placeholder="Add a caption..."></textarea>
+                        <br><br>
+                        <div class="upload-button-container">
+                            <button id="clearEditButton">Clear</button>
+                            <button id="postEditButton">Update</button>
+                            <button id="closeEditModalButton">Cancel</button>
+                        </div>
+                        <!-- Loading spinner -->
+                        <div id="editLoadingSpinner" class="loading-spinner">
+                            <!-- Add your loading animation here, e.g., an animated SVG or GIF -->
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
         <div class="rightSide" id="rightSide">
@@ -134,7 +186,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import{ getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js"
-        import{ getDatabase, ref, child, get, set, push, remove, update, onValue, onChildAdded, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import{ getDatabase, ref, child, get, set, push, remove, update, onValue, onChildAdded, onChildRemoved, orderByKey, orderByChild } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -204,11 +256,13 @@
                     const photoBooth = document.querySelector(".photoBooth");
                     const rightSide = document.querySelector(".rightSide");
                     const addPhotoBtn = document.querySelector(".addPhoto");
+                    const myPhotoBtn = document.querySelector(".myPostsBtn");
 
                     container.style.display = "none";
                     photoBooth.style.display = "flex";
                     rightSide.style.display = "flex";
                     addPhotoBtn.style.display = "block";
+                    myPhotoBtn.style.display = "block";
                 })
                 .catch((error) => {
                     console.error("Login error:", error);
@@ -258,10 +312,16 @@
         document.getElementById('addPhoto').addEventListener('click', function () {
             addPhotoCounter += 1;
             if(addPhotoCounter % 2 == 1){
-                this.classList.toggle('active'); 
-                document.getElementById('choiceContainer').classList.toggle('active');
-                document.getElementById('takePhotoChoice').style.display = "block";
-                document.getElementById('uploadPhotoChoice').style.display = "block";
+                if(document.getElementById('photoBoothSection').innerText == "#MY POSTS"){
+                    alert("Please go back to the main section to create another post")
+                    addPhotoCounter -= 1;
+                }
+                else{
+                    this.classList.toggle('active'); 
+                    document.getElementById('choiceContainer').classList.toggle('active');
+                    document.getElementById('takePhotoChoice').style.display = "block";
+                    document.getElementById('uploadPhotoChoice').style.display = "block";
+                }
             }
             else{
                 this.classList.remove('active'); 
@@ -362,20 +422,29 @@
         document.getElementById('fileUpload').addEventListener('change', function(event) {
             const file = event.target.files[0]; // Get the selected file
 
+            // Set the maximum file size in bytes (10MB for now)
+            const maxSize = 10485760;
+
             if (file) {
+                // Check if the file size exceeds the maximum size
+                if (file.size > maxSize) {
+                    alert('File size exceeds the maximum limit of 1 MB.');
+                    return; // Abort file upload
+                }
+
                 const reader = new FileReader(); // Create a new FileReader object
 
                 reader.onload = function(e) {
                     // Set the src attribute of the image tag to display the selected image
                     document.getElementById('userUploadedPhoto').src = e.target.result;
                     document.getElementById("upload-btn").style.display = "none";
-                    
                 };
 
                 // Read the selected file as a data URL
                 reader.readAsDataURL(file);
             }
         });
+
 
         // Function to handle the upload process
         async function uploadProcess() {
@@ -420,6 +489,7 @@
             if (!isImageValid) {
                 alert("Please upload a valid image file (JPEG, PNG, or GIF).");
                 loadingSpinner.style.display = "none";
+                document.getElementById("upload-btn").style.display = "block";
                 return;
             }
 
@@ -595,7 +665,7 @@
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then((stream) => {
                     // If access is granted, you can handle the stream here
-                    console.log('Camera access granted. Thank you!');
+                    console.log('Camera access granted, thank you!');
                     // You can use the stream for other purposes, such as displaying the video in a video element
                     // For now, just stop the stream as it's not needed yet
                     stream.getTracks().forEach(track => track.stop());
@@ -729,10 +799,383 @@
                     console.error("Error converting image to Blob:", error);
                     // Hide the loading spinner once the upload is complete
                     loadingSpinner.style.display = "none";
+                }); 
+        })
+        //--------------------------------------------------------------------------
+        //EDIT POST MODAL CODE
+
+        let postId = ""
+        let currentHearts = 0;
+        let currentLaughs = 0;
+        let currentThumbsUp = 0;
+        let originalDate = "";
+        const editPostModal = document.getElementById('editPostModal');
+        const uploadNewPhotoBtn = document.getElementById('uploadNewPhotoBtn');
+        const takeNewPhotoBtn = document.getElementById('takeNewPhotoBtn');
+
+        const currentImageContainer = document.getElementById('currentImageContainer');
+        const currentPostPhoto = document.getElementById('currentPostPhoto');
+
+        const editImageContainer = document.getElementById('editImageContainer');
+        const editTakePhotoBtn = document.getElementById('editTakePhotoBtn');
+        const editUserTakenPhoto = document.getElementById('editUserTakenPhoto');
+        
+        const uploadEditImageContainer = document.getElementById('editUserUploadedPhoto');
+        const editCameraContainer = document.getElementById('editCameraContainer');
+
+        const clearEditButton = document.getElementById('clearEditButton');
+        const postEditButton = document.getElementById('postEditButton');
+        const closeEditModalButton = document.getElementById("closeEditModalButton");
+        const deletePostBtn = document.getElementById('deletePostBtn');
+
+        async function getPost(postID){
+            postId = postID;
+            const db = getDatabase();
+            const dataRef = ref(db, photoBoothSection + postID);
+
+            try {
+                const snapshot = await get(dataRef);
+                if (snapshot.exists()) {
+                    const postData = snapshot.val();
+
+                    // Fill the current post image
+                    document.getElementById('currentPostPhoto').src = postData.Image;
+                    // Fill the caption
+                    document.getElementById('editUserUploadedCaption').value = postData.Caption;
+
+                    currentHearts = postData.Hearts;
+                    currentLaughs = postData.Laughs;
+                    currentThumbsUp = postData.ThumbsUp;
+                    originalDate = postData.CurrentDate
+
+                }
+            }
+            catch (error) {
+                console.error('Error fetching post data:', error);
+            }
+        }
+
+        editPostModal.addEventListener('click', function(event) {
+            if (event.target == editPostModal) {
+                clearEditButton.click();
+                editPostModal.style.display = 'none';
+                currentImageContainer.style.display = 'block';
+                editImageContainer.style.display = 'none';
+                editCameraContainer.style.display = 'none';
+                postId = "";
+            }
+        });
+
+        // Hide initial image container and show the corresponding editing container
+        uploadNewPhotoBtn.addEventListener('click', function() {
+            currentImageContainer.style.display = 'none';
+            editImageContainer.style.display = 'block';
+            editCameraContainer.style.display = 'none';
+            uploadEditImageContainer.src = "";
+            currentPostPhoto.src = '';
+            document.getElementById('editUploadBtn').style.display = 'block';
+        });
+
+        // Grabs the uploaded image and displays it to the user
+        document.getElementById('editFileUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0]; // Get the selected file
+
+            // Set the maximum file size in bytes (10MB for now)
+            const maxSize = 10485760;
+
+            if (file) {
+                // Check if the file size exceeds the maximum size
+                if (file.size > maxSize) {
+                    alert('File size exceeds the maximum limit of 1 MB.');
+                    return; // Abort file upload
+                }
+
+                const reader = new FileReader(); // Create a new FileReader object
+
+                reader.onload = function(e) {
+                    // Set the src attribute of the image tag to display the selected image
+                    document.getElementById('editUserUploadedPhoto').src = e.target.result;
+                    document.getElementById("editUploadBtn").style.display = "none";
+                };
+
+                // Read the selected file as a data URL
+                reader.readAsDataURL(file);
+            }
+        });
+
+        let isEditStreaming = false;
+        let editVideo;
+
+        takeNewPhotoBtn.addEventListener('click', function() {
+            document.getElementById('currentImageContainer').style.display = 'none';
+            document.getElementById('editImageContainer').style.display = 'none';
+            document.getElementById('editCameraContainer').style.display = 'block';
+            editCameraPhotoDisplay.src = '';
+            currentPostPhoto.src = '';
+            editUserTakenPhoto.srcObject = null;
+            editTakePhotoBtn.style.display = "block";
+        });
+
+        editTakePhotoBtn.addEventListener('click', handleEditTakePhoto);
+
+        // Function to handle the "Take Photo" button click for the edit modal
+        function handleEditTakePhoto() {
+
+            if (!isEditStreaming) {
+                // First click: request camera access and stream the video
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then((stream) => {
+                        // Create a video element to display the camera stream
+                        editVideo = document.createElement('video');
+                        editVideo.srcObject = stream;
+                        editVideo.play();
+
+                        // Set the src attribute of the cameraPhotoDisplay element to the image data URL
+                        const editCameraPhotoDisplay = document.getElementById('editCameraPhotoDisplay');
+                        editCameraPhotoDisplay.style.display = 'none';
+
+                        editUserTakenPhoto.style.display = 'block';
+                        
+                        // Stream the video to the editUserTakenPhoto element
+                        editUserTakenPhoto.srcObject = stream;
+
+                        // Clearing up space for the take photo button
+                        uploadNewPhotoBtn.style.opacity = '0';
+                        takeNewPhotoBtn.style.opacity = '0';
+                        deletePostBtn.style.opacity = '0';
+
+                        // Move the button down out of the image container
+                        editTakePhotoBtn.style.top = '110%';  // Adjust top as needed
+
+                        // Set the streaming flag to true
+                        isEditStreaming = true;
+                    })
+                    .catch((error) => {
+                        // Handle camera access error
+                        console.error('Error accessing the camera:', error);
+                        alert('Could not access the camera. Please allow camera access and try again.');
+                    });
+            } else {
+                // Second click: capture a frame from the video and display the image
+                const canvas = document.createElement('canvas');
+                canvas.width = editVideo.videoWidth;
+                canvas.height = editVideo.videoHeight;
+
+                // Draw the current frame from the video to the canvas
+                const context = canvas.getContext('2d');
+                context.drawImage(editVideo, 0, 0, canvas.width, canvas.height);
+
+                // Convert canvas content to base64 image data URL
+                const imageDataUrl = canvas.toDataURL('image/png');
+
+                // Set the src attribute of the cameraPhotoDisplay element to the image data URL
+                const editCameraPhotoDisplay = document.getElementById('editCameraPhotoDisplay');
+                editCameraPhotoDisplay.src = imageDataUrl;
+
+                // Once the src is set, display the cameraPhotoDisplay element and hide the video element
+                editCameraPhotoDisplay.style.display = 'block'; // Display the img element
+
+                editUserTakenPhoto.style.display = 'none'; // Hide the video element
+
+                // Stop the video stream
+                editVideo.srcObject.getTracks().forEach(track => track.stop());
+
+                // Reset the streaming flag to false
+                isEditStreaming = false;
+
+                // Move the button back to its original position
+                editTakePhotoBtn.style.display = "none";
+                editTakePhotoBtn.style.top = '50%';
+
+                // Clearing up space for the take photo button
+                uploadNewPhotoBtn.style.opacity = '1';
+                takeNewPhotoBtn.style.opacity = '1';
+                deletePostBtn.style.opacity = '1';
+            }
+        }
+
+        clearEditButton.addEventListener('click', function() {
+            // Get all elements that need to be cleared
+            const editUserUploadedPhoto = document.getElementById('editUserUploadedPhoto');
+            const editUserTakenPhoto = document.getElementById('editUserTakenPhoto');
+            const editCameraPhotoDisplay = document.getElementById('editCameraPhotoDisplay');
+            const editUserUploadedCaption = document.getElementById('editUserUploadedCaption');
+
+            // Clear the src attribute of the image elements
+            currentPostPhoto.src = '';
+            editUserUploadedPhoto.src = '';
+            editCameraPhotoDisplay.src = '';
+
+            // Clear the text content of the caption textarea
+            editUserUploadedCaption.value = '';
+
+            // Resetting buttons
+            editTakePhotoBtn.style.display = "none";
+            editTakePhotoBtn.style.top = '50%';
+            isEditStreaming = false;
+
+            uploadNewPhotoBtn.style.opacity = '1';
+            takeNewPhotoBtn.style.opacity = '1';
+            
+            // Optionally, stop the video stream if it's running
+            if (editUserTakenPhoto.srcObject) {
+                let stream = editUserTakenPhoto.srcObject;
+                let tracks = stream.getTracks();
+
+                tracks.forEach(function(track) {
+                    track.stop();
                 });
 
-            
-        })
+                editUserTakenPhoto.srcObject = null;
+            }
+        });
+
+        postEditButton.addEventListener('click', updatePost);
+
+        // Function to handle the delete process
+        deletePostBtn.addEventListener('click', async function () {
+            const userConfirmed = confirm("Are you sure you want to delete this post?");
+            if (userConfirmed) {
+                try {
+                    const db = getDatabase();
+                    const postRef = ref(db, photoBoothSection + postId);
+                    await remove(postRef);
+                    alert('Post deleted successfully!');
+                    const displayName = userObject.displayName;
+                    await displayPostsByUser(displayName);
+                    closeEditModalButton.click();
+                } catch (error) {
+                    console.error('Error deleting post:', error);
+                    alert('Failed to delete post. Please try again.');
+                }
+            }
+        });
+
+        // Function to handle the update process
+        async function updatePost() {
+            const loadingSpinner = document.getElementById("editLoadingSpinner");
+            loadingSpinner.style.display = "block";
+
+            // Get references to the photo elements
+            const currentPhoto = document.getElementById('currentPostPhoto').src;
+            const newUploadedPhoto = document.getElementById('editUserUploadedPhoto').src;
+            const newTakenPhoto = document.getElementById('editCameraPhotoDisplay').src;
+            const caption = document.getElementById('editUserUploadedCaption').value.trim();
+
+            // Ensure there's at least one photo
+            const photo = newUploadedPhoto || newTakenPhoto || currentPhoto;
+            if (!photo) {
+                alert('Please provide at least one photo.');
+                loadingSpinner.style.display = "none";
+                return;
+            }
+
+            // Ensure there's text within the caption
+            if (!caption) {
+                alert('Please provide a caption.');
+                loadingSpinner.style.display = "none";
+                return;
+            }
+
+            // Current timestamp in milliseconds
+            const currentTimestamp = Date.now();
+
+            // Create a reference to the Firebase Storage
+            const storage = getStorage();
+
+            // Variable to hold the image URL
+            let imageUrl = "";
+
+            // Check if there's a new uploaded photo
+            if (newUploadedPhoto) {
+                const fileInput = document.getElementById("editFileUpload");
+                const file = fileInput.files[0];
+
+                // Verify that the file is a valid image using the FileReader API
+                const isImageValid = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const image = new Image();
+                        image.onload = () => {
+                            resolve(true);
+                        };
+                        image.onerror = () => {
+                            resolve(false);
+                        };
+                        image.src = reader.result;
+                    };
+                    reader.onerror = () => {
+                        resolve(false);
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                // If the file is not a valid image, alert the user and stop the process
+                if (!isImageValid) {
+                    alert("Please upload a valid image file (JPEG, PNG, or GIF).");
+                    loadingSpinner.style.display = "none";
+                    return;
+                }
+
+                const storageRef = sRef(storage, `Images/${currentTimestamp}`);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
+                // Wait for the upload to be completed
+                await new Promise((resolve, reject) => {
+                    uploadTask.on('state_changed',
+                        (snapshot) => {},
+                        (error) => {
+                            reject(error);
+                        },
+                        async () => {
+                            imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            resolve();
+                        }
+                    );
+                });
+            } else if (newTakenPhoto) {
+                // Handle new taken photo (if needed)
+                imageUrl = newTakenPhoto;
+            } else {
+                // Use the current photo if no new photo is provided
+                imageUrl = currentPhoto;
+            }
+
+            // Reference to the post in the database
+            const db = getDatabase();
+            const postRef = ref(db, photoBoothSection + postId);
+
+            // Update the post in the database
+            try {
+                await set(postRef, {
+                    Image: imageUrl,
+                    Caption: caption,
+                    Hearts: currentHearts,
+                    Laughs: currentLaughs,
+                    ThumbsUp: currentThumbsUp,
+                    User: userObject.displayName,
+                    postID: postId,
+                    CurrentDate: originalDate
+                });
+                alert('Post updated successfully!');
+                closeEditModalButton.click();
+            } catch (error) {
+                console.error('Error updating post:', error);
+                alert('Failed to update post. Please try again.');
+            } finally {
+                loadingSpinner.style.display = "none";
+            }
+        }
+
+        closeEditModalButton.addEventListener('click', function() { 
+            clearEditButton.click();
+            document.getElementById('editPostModal').style.display = 'none';
+            currentImageContainer.style.display = 'block';
+            editImageContainer.style.display = 'none';
+            editCameraContainer.style.display = 'none';
+            postId = "";
+        });
+
         //--------------------------------------------------------------------------
         //GENERAL DATABASE FUNCTIONS
         function uploadToDB(timestamp, date, imageUrl, caption, user, photoBoothSection){
@@ -760,7 +1203,11 @@
             // Listen for new child additions at the specified path
             onChildAdded(dataRef, (childSnapshot) => {
                 // When a new child node is added, call the fetchAndReverseData function
-                fetchAndReverseData();
+                // Get the full path of the added child
+                const childPath = childSnapshot.ref.toString();
+                if (childPath.includes(photoBoothSection)) { 
+                    fetchAndReverseData();
+                }
             }, (error) => {
                 // Handle errors during the event listening
                 console.error("Error listening for new posts:", error);
@@ -777,9 +1224,7 @@
 
             // Specify the path to the data you want to fetch
             const dataRef = ref(db, photoBoothSection);
-
-            // Initialize an array to store the data
-            let dataList = [];
+            // photobooth.v8kjsdkjf/home/
 
             // Listen for data changes at the specified path
             onValue(dataRef, (snapshot) => {
@@ -826,45 +1271,43 @@
             updateData[reactionType] = newCounter;
             update(postRef, updateData)
                 .then(() => {
-                    console.log(`Successfully updated ${reactionType} counter for postID ${postID}`);
+                    
                 })
                 .catch((error) => {
                     console.error(`Error updating ${reactionType} counter for postID ${postID}:`, error);
                 });
         }
 
-        function createPost(dataInstance) {
-            // Check if the user has signed in with Google
-
+        function createPost(dataInstance, editMode = false) {
             // Create a new div element with the class "post"
             const newPost = document.createElement('div');
             newPost.classList.add('post');
             newPost.id = dataInstance.postID;
-            
-            // Set the image src attribute and class
-            const postImage = document.createElement('img');
-            postImage.classList.add('postImg');
-            postImage.src = dataInstance.Image;
-            
-            // Append the image to the new post
-            newPost.appendChild(postImage);
-            
+
+            // Create a div for the post image and set its class
+            const postImageDiv = document.createElement('div');
+            postImageDiv.classList.add('postImg');
+            postImageDiv.style.backgroundImage = `url('${dataInstance.Image}')`;
+
+            // Append the image div to the new post
+            newPost.appendChild(postImageDiv);
+
             // Create a div for the reactions and set its class
             const reactionsDiv = document.createElement('div');
             reactionsDiv.classList.add('reactions');
-            
+
             // Create a function to add a reaction section
             function addReaction(reactionType, counter) {
                 // Create a div for the reaction and set its ID based on the postID and reactionType
                 const reactionDiv = document.createElement('div');
                 reactionDiv.classList.add('reaction');
                 reactionDiv.id = `${reactionType}Reaction_${dataInstance.postID}`;
-                
+
                 // Create an image element for the reaction icon
                 const reactionIcon = document.createElement('img');
                 reactionIcon.classList.add('reactionIcon'); // Add this class for hover effect
                 reactionIcon.alt = reactionType;
-                
+
                 // Set the src attribute based on the reaction type
                 switch (reactionType) {
                     case 'Hearts':
@@ -877,31 +1320,31 @@
                         reactionIcon.src = 'assets/thumbsUp_icon.png';
                         break;
                 }
-                
+
                 // Create a span element for the counter and set its ID based on the postID and reactionType
                 const counterSpan = document.createElement('span');
                 counterSpan.id = `${reactionType}_${dataInstance.postID}`;
                 counterSpan.innerText = counter;
-                
+
                 // Append the reaction icon and counter span to the reaction div
                 reactionDiv.appendChild(reactionIcon);
                 reactionDiv.appendChild(counterSpan);
-                
+
                 // Append the reaction div to the reactions div
                 reactionsDiv.appendChild(reactionDiv);
-                
+
                 // Add an event listener to the reaction div to call incrementCounter on click
                 reactionDiv.addEventListener('click', () => incrementCounter(counterSpan.id));
             }
-            
+
             // Add heart, laugh, and thumbs up reactions with counters
             addReaction('Hearts', dataInstance.Hearts);
             addReaction('Laughs', dataInstance.Laughs);
             addReaction('ThumbsUp', dataInstance.ThumbsUp);
-            
+
             // Append the reactions div to the new post
             newPost.appendChild(reactionsDiv);
-            
+
             // Create a paragraph element for the post description
             const postDesc = document.createElement('p');
             postDesc.classList.add('postDesc');
@@ -909,7 +1352,7 @@
             // Create a strong element for the username and colon, and set its style to bold and underlined
             const strongTag = document.createElement('strong');
             strongTag.innerText = `${dataInstance.User}:`;
-            
+
             // Append the strong element to the post description
             postDesc.appendChild(strongTag);
 
@@ -918,21 +1361,46 @@
 
             // Append the post description to the new post
             newPost.appendChild(postDesc);
-            
+
             // Create a span element for the current date
             const currentDateSpan = document.createElement('span');
             currentDateSpan.classList.add('currentDate');
             currentDateSpan.innerText = dataInstance.CurrentDate;
-            
+
             // Append the current date span to the right of the reactions div
             reactionsDiv.appendChild(currentDateSpan);
-            
+
+            // Check if edit mode is enabled and add edit button
+            if (editMode) {
+                const editButton = document.createElement('button');
+                editButton.classList.add('editButton');
+                editButton.id = ("btn " + dataInstance.postID);
+                const postId = editButton.id.split(' ')[1];
+                editButton.innerText = 'Edit';
+                editButton.addEventListener('click', () => {
+                    getPost(postId);
+                    document.getElementById('editPostModal').style.display = "block";
+                })
+                //editButton.addEventListener('click', () => editPost(dataInstance.postID));
+                newPost.appendChild(editButton);
+            }
+
             // Append the new post to the div with the class "postBox"
             const postBox = document.querySelector('.posts');
             if (postBox) {
                 postBox.insertBefore(newPost, postBox.firstChild); // Insert new post above existing posts
             }
         }
+
+        document.getElementById('uploadNewPhotoBtn').addEventListener('click', function() {
+            document.getElementById('editImageContainer').style.display = 'block';
+            document.getElementById('editCameraContainer').style.display = 'none';
+        });
+
+        document.getElementById('takeNewPhotoBtn').addEventListener('click', function() {
+            document.getElementById('editImageContainer').style.display = 'none';
+            document.getElementById('editCameraContainer').style.display = 'block';
+        });
 
         //------------------------------------------------------------------------------------------
         //SECTION FUNCTIONS
@@ -941,7 +1409,7 @@
             // Get the clicked button's text content
             const clickedButtonText = event.target.id;
             const newSection = clickedButtonText + "/";
-            if(newSection == photoBoothSection){
+            if(newSection == photoBoothSection && document.getElementById('myPostsBtn').innerText == "My Posts"){
                 return;
             }
 
@@ -966,6 +1434,8 @@
             photoBoothSection = newSection;
             document.getElementById('photoBoothSection').innerHTML = `#${uppercasedText}`;
 
+            document.getElementById('myPostsBtn').innerText = "My Posts";
+
             // Call the fetchAndReverseData function with the new photoBoothSection value
             fetchAndReverseData();
         }
@@ -985,49 +1455,54 @@
             // Create an object to map button IDs to colors and hover colors
             const colors = {
                 'home': {
-                    backgroundImage: 'linear-gradient(to bottom, #00b4d8, #001f3f)',
-                    buttonColor: '#00b4d8',
-                    hoverColor: '#007bb6', // Define hover color based on button color
+                    backgroundImage: 'linear-gradient(to top, #3a7bd5 0%, #00d2ff 100%)',
+                    buttonColor: '#3b3b3b',
+                    hoverColor: '#2b2b2b', 
                 },
                 'music': {
-                    backgroundImage: 'linear-gradient(to top, #123456 0%, #abcdef 100%)',
-                    buttonColor: '#ff7f50',
-                    hoverColor: '#ff5530', // Define hover color based on button color
+                    backgroundImage: 'linear-gradient(to top, #00ff80 0%, #ff00bf 100%)',
+                    buttonColor: '#00ff80',
+                    hoverColor: '#00b359', 
+                },
+                'memes': {
+                    backgroundImage: 'linear-gradient(to top, #ff9a00 0%, #ff0080 100%)',
+                    buttonColor: '#ff9a00',
+                    hoverColor: '#ff5530', 
                 },
                 'petpals': {
-                    backgroundImage: 'linear-gradient(to top, #7b4397 0%, #f3f4f6 100%)',
-                    buttonColor: '#4a90e2',
-                    hoverColor: '#2b78d8', // Define hover color based on button color
+                    backgroundImage: 'linear-gradient(to top, #ff80bf 0%, #0080ff 100%)',
+                    buttonColor: '#ff80bf',
+                    hoverColor: '#ff4080', 
                 },
                 'friends': {
-                    backgroundImage: 'linear-gradient(to top, #ff9a9e 0%, #fecfef 100%)',
-                    buttonColor: '#ff4081',
-                    hoverColor: '#ff1744', // Define hover color based on button color
+                    backgroundImage: 'linear-gradient(to top, #f9ed69 0%, #f08a5d 100%)',
+                    buttonColor: '#f9ed69',
+                    hoverColor: '#e7d317', 
                 },
                 'outdoors': {
                     backgroundImage: 'linear-gradient(to top, #2af598 0%, #009efd 100%)',
                     buttonColor: '#00b894',
-                    hoverColor: '#00a676', // Define hover color based on button color
+                    hoverColor: '#00a676', 
                 },
                 'vacation': {
                     backgroundImage: 'linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%)',
                     buttonColor: '#ff6f61',
-                    hoverColor: '#ff4f3a', // Define hover color based on button color
+                    hoverColor: '#ff4f3a', 
                 },
                 'projects': {
-                    backgroundImage: 'linear-gradient(to top, #3a7bd5 0%, #00d2ff 100%)',
-                    buttonColor: '#3b3b3b',
-                    hoverColor: '#2b2b2b', // Define hover color based on button color
+                    backgroundImage: 'linear-gradient(to bottom, #00b4d8, #001f3f)',
+                    buttonColor: '#00b4d8',
+                    hoverColor: '#007bb6', 
                 },
                 'sparclabs': {
                     backgroundImage: 'linear-gradient(to top, #FFD100 0%, #00539B 100%)',
                     buttonColor: '#00539B',
-                    hoverColor: '#004080', // Define hover color based on button color
+                    hoverColor: '#004080', 
                 },
                 'devlog': {
                     backgroundImage: 'linear-gradient(to top, #209cff 0%, #68e0cf 100%)',
                     buttonColor: '#1a73e8',
-                    hoverColor: '#0049ff', // Define hover color based on button color
+                    hoverColor: '#0049ff', 
                 },
             };
 
@@ -1224,73 +1699,59 @@
             }
         });
             
-        // Function to add test data to the online users list in the Firebase database
-        /*function addTestDataToOnlineUsersList() {
-            // Get a reference to the Firebase Realtime Database
+        //------------------------------------------------------------------------------------------
+        //User posts functions
+
+        // Function to fetch all posts by a specific user
+        async function fetchPostsByUser(displayName) {
             const db = getDatabase();
+            const dataRef = ref(db, photoBoothSection);
+            const snapshot = await get(dataRef);
 
-            // Define an array of test users
-            const testUsers = [
-                {
-                    uid: "user1",
-                    name: "Test User 1",
-                    profileImageUrl: "userIcons/armadillo.png"
-                },
-                {
-                    uid: "user2",
-                    name: "Test User 2",
-                    profileImageUrl: "userIcons/jaguar.png"
-                },
-                {
-                    uid: "user3",
-                    name: "Test User 3",
-                    profileImageUrl: "userIcons/macaw.png"
-                },
-                {
-                    uid: "user4",
-                    name: "Test User 4",
-                    profileImageUrl: "userIcons/penguin.png"
-                }, 
-                {
-                    uid: "user5",
-                    name: "Test User 5",
-                    profileImageUrl: "userIcons/penguin.png"
-                }, 
-                {
-                    uid: "user6",
-                    name: "Test User 6",
-                    profileImageUrl: "userIcons/penguin.png"
-                }, 
-                {
-                    uid: "user7",
-                    name: "Test User 7",
-                    profileImageUrl: "userIcons/penguin.png"
-                }, 
-                {
-                    uid: "user8",
-                    name: "Test User 8",
-                    profileImageUrl: "userIcons/penguin.png"
-                }, 
-            ];
-
-            // Iterate through each test user
-            testUsers.forEach((user) => {
-                // Create a reference to the 'currentlyOnlineUsers' route in the database with the user's UID as the branch key
-                const userRef = ref(db, 'currentlyOnlineUsers/' + user.uid);
-
-                // Add the user data to the database under the user's UID
-                set(userRef, {
-                    displayName: user.name,
-                    photoURL: user.profileImageUrl
-                })
-                .then(() => {
-                    console.log(`Test data for ${user.name} added to the online users list.`);
-                })
-                .catch((error) => {
-                    console.error(`Error adding test data for ${user.name}:`, error);
+            const userPosts = [];
+            if (snapshot.exists()) {
+                snapshot.forEach((childSnapshot) => {
+                    const timestamp = childSnapshot.key;
+                    const postRef = ref(db, `${photoBoothSection}/${timestamp}`);
+                    onValue(postRef, (snapshot) => {
+                        const postData = snapshot.val();
+                        if (postData.User === displayName) {
+                            userPosts.push(postData);
+                        }
+                    });
                 });
+            }
+
+            return userPosts;
+        }
+
+        // Function to display posts by a specific user
+        async function displayPostsByUser(displayName) {
+            document.getElementById('photoBoothSection').innerHTML = "#MY POSTS";
+            const userPosts = await fetchPostsByUser(displayName);
+            const postBox = document.querySelector('.posts');
+            postBox.innerHTML = ''; // Clear existing posts
+
+            userPosts.forEach((post) => {
+                createPost(post, true); // Pass true to indicate edit mode
             });
-        }*/
+        }
+
+        // Event listener for "My Posts" button
+        document.getElementById('myPostsBtn').addEventListener('click', async () => {
+            if(document.getElementById('myPostsBtn').innerText == "Go Back"){
+                document.getElementById('myPostsBtn').innerText = "My Posts";
+                document.getElementById('photoBoothSection').innerHTML = "#" + photoBoothSection.slice(0, -1).toUpperCase();
+                const postBox = document.querySelector('.posts');
+                postBox.innerHTML = ''; // Clear existing posts
+                fetchAndReverseData();
+                return;
+            }
+            document.getElementById('myPostsBtn').innerText = "Go Back"
+            const displayName = userObject.displayName; // Replace this with the display name of the current user
+            await displayPostsByUser(displayName);
+        });
+
         //------------------------------------------------------------------------------------------
         //HOMEPAGE
 
@@ -1299,7 +1760,6 @@
             if(localStorage.getItem("user")){
                 const user = localStorage.getItem("user");
                 userObject = JSON.parse(user);
-                console.log(userObject);
 
                 requestCameraAccess();
 
@@ -1317,11 +1777,13 @@
                 const photoBooth = document.querySelector(".photoBooth");
                 const rightSide = document.querySelector(".rightSide");
                 const addPhotoBtn = document.querySelector(".addPhoto");
+                const myPhotoBtn = document.querySelector(".myPostsBtn");
 
                 container.style.display = "none";
                 photoBooth.style.display = "flex";
                 rightSide.style.display = "flex";
                 addPhotoBtn.style.display = "block";
+                myPhotoBtn.style.display = "block";
             }
             const images = ["assets/homepage_img8.jpeg", "assets/homepage_img9.jpeg", "assets/homepage_img5.webp", "assets/homepage_img7.jpeg"]; // Replace with your image filenames
             const container = document.querySelector(".container");
